@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BangaloreConnect</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="setup">
+        <button id="on-btn">Data: OFF</button>
+        <button id="match-btn" disabled>Match Me</button>
+    </div>
+
+    <div id="chat-ui" style="display:none;">
+        <div id="messages"></div>
+        <input type="text" id="msg-input" placeholder="Type a message...">
+        <button id="send-btn">Send</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const onBtn = document.getElementById('on-btn');
+        const matchBtn = document.getElementById('match-btn');
+
+        onBtn.onclick = () => {
+            onBtn.innerText = "Data: ON";
+            onBtn.style.background = "green";
+            matchBtn.disabled = false;
+        };
+
+        matchBtn.onclick = () => {
+            socket.emit('find-match');
+            matchBtn.innerText = "Searching...";
+        };
+
+        socket.on('match-found', () => {
+            document.getElementById('setup').style.display = 'none';
+            document.getElementById('chat-ui').style.display = 'block';
+        });
+
+        document.getElementById('send-btn').onclick = () => {
+            const msg = document.getElementById('msg-input').value;
+            socket.emit('send-message', msg);
+            document.getElementById('messages').innerHTML += `<p><b>You:</b> ${msg}</p>`;
+            document.getElementById('msg-input').value = "";
+        };
+
+        socket.on('receive-message', (msg) => {
+            document.getElementById('messages').innerHTML += `<p><b>Partner:</b> ${msg}</p>`;
+        });
+    </script>
+</body>
+</html>
