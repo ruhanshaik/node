@@ -1,19 +1,37 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BangaloreConnect</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #f4f4f9; padding: 20px; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
+        button { padding: 12px 24px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; transition: 0.3s; }
+        #on-btn { background: #6c757d; color: white; }
+        #match-btn { background: #007bff; color: white; }
+        #match-btn:disabled { background: #ccc; cursor: not-allowed; }
+        #chat-box { height: 300px; border: 1px solid #ddd; overflow-y: auto; margin: 20px 0; padding: 10px; text-align: left; background: #fafafa; }
+        input { width: 70%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+    </style>
 </head>
 <body>
-    <div id="setup">
-        <button id="on-btn">Data: OFF</button>
-        <button id="match-btn" disabled>Match Me</button>
-    </div>
 
-    <div id="chat-ui" style="display:none;">
-        <div id="messages"></div>
-        <input type="text" id="msg-input" placeholder="Type a message...">
-        <button id="send-btn">Send</button>
+    <div class="card">
+        <h1>BangaloreConnect</h1>
+        
+        <div id="lobby">
+            <button id="on-btn">Data: OFF</button>
+            <br>
+            <button id="match-btn" disabled>Search for Match</button>
+            <p id="status">Toggle Data to start</p>
+        </div>
+
+        <div id="chat-section" style="display:none;">
+            <div id="chat-box"></div>
+            <input type="text" id="msg-input" placeholder="Type a message...">
+            <button id="send-btn" style="background: #28a745; color: white;">Send</button>
+        </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -21,33 +39,46 @@
         const socket = io();
         const onBtn = document.getElementById('on-btn');
         const matchBtn = document.getElementById('match-btn');
+        const status = document.getElementById('status');
+        const chatSection = document.getElementById('chat-section');
+        const lobby = document.getElementById('lobby');
 
         onBtn.onclick = () => {
             onBtn.innerText = "Data: ON";
-            onBtn.style.background = "green";
+            onBtn.style.background = "#28a745";
             matchBtn.disabled = false;
+            status.innerText = "Ready to connect!";
         };
 
         matchBtn.onclick = () => {
             socket.emit('find-match');
-            matchBtn.innerText = "Searching...";
+            matchBtn.disabled = true;
+            status.innerText = "Finding a partner in Bangalore...";
         };
 
         socket.on('match-found', () => {
-            document.getElementById('setup').style.display = 'none';
-            document.getElementById('chat-ui').style.display = 'block';
+            lobby.style.display = 'none';
+            chatSection.style.display = 'block';
         });
 
         document.getElementById('send-btn').onclick = () => {
-            const msg = document.getElementById('msg-input').value;
-            socket.emit('send-message', msg);
-            document.getElementById('messages').innerHTML += `<p><b>You:</b> ${msg}</p>`;
-            document.getElementById('msg-input').value = "";
+            const input = document.getElementById('msg-input');
+            if (input.value.trim() !== "") {
+                socket.emit('send-message', input.value);
+                addMessage("You", input.value);
+                input.value = "";
+            }
         };
 
         socket.on('receive-message', (msg) => {
-            document.getElementById('messages').innerHTML += `<p><b>Partner:</b> ${msg}</p>`;
+            addMessage("Stranger", msg);
         });
+
+        function addMessage(sender, text) {
+            const box = document.getElementById('chat-box');
+            box.innerHTML += `<div><strong>${sender}:</strong> ${text}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
     </script>
 </body>
 </html>
