@@ -78,7 +78,6 @@
         .gender-btn.selected { border-color: var(--dark-yellow); background: #FFF; }
         .gender-btn span { font-size: 30px; }
 
-        /* Buttons & Inputs */
         .ios-btn {
             width: 100%; background: #000; color: #FFF;
             border: none; padding: 14px; border-radius: 14px;
@@ -90,18 +89,28 @@
             padding: 12px; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box;
         }
 
-        /* Rotating Icon Loader Logic */
-        .rotating-logo {
-            width: 100px;
-            height: 100px;
+        /* --- THE LOGO ROTATION LOADER --- */
+        .logo-loader-container {
             margin: 40px auto;
-            animation: spinPause 5s infinite linear;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        @keyframes spinPause {
+        .rotating-logo-img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            /* 3s spin + 2s pause = 5s total animation cycle */
+            animation: spinRightPause 5s infinite ease-in-out;
+        }
+
+        @keyframes spinRightPause {
             0% { transform: rotate(0deg); }
-            60% { transform: rotate(1080deg); } /* Fast spin for 3 seconds (60% of 5s) */
-            100% { transform: rotate(1080deg); } /* Idle for 2 seconds (40% of 5s) */
+            60% { transform: rotate(1080deg); } /* Spins 3 full times in 3 seconds (60% of 5s) */
+            100% { transform: rotate(1080deg); } /* Stays still for 2 seconds (40% of 5s) */
         }
 
         #timeout-msg { color: #FF3B30; display: none; font-size: 12px; font-weight: 600; margin-top: 10px; }
@@ -144,16 +153,18 @@
         </div>
 
         <div id="screen-form" class="screen">
-            <input type="text" id="name" placeholder="First Name">
-            <input type="number" id="age" placeholder="Age">
-            <input type="text" id="origin" placeholder="City/Country">
+            <input type="text" id="name" placeholder="Your Name">
+            <input type="number" id="age" placeholder="Your Age">
+            <input type="text" id="origin" placeholder="Your City">
             <button class="ios-btn" onclick="startMatching()">Connect Now</button>
         </div>
 
         <div id="screen-loading" class="screen">
-            <img src="Omigle.png" class="rotating-logo" alt="Searching...">
-            <p style="font-size: 14px; font-weight: 600; color: #444;">Connecting to global servers...</p>
-            <p id="timeout-msg">System Busy: No active users found. Try again shortly.</p>
+            <div class="logo-loader-container">
+                <img src="Omigle.png" class="rotating-logo-img" alt="Searching...">
+            </div>
+            <p style="font-size: 14px; font-weight: 600; color: #444;">Syncing with partners...</p>
+            <p id="timeout-msg">No one is currently available. Please wait or refresh.</p>
         </div>
 
         <div id="screen-chat" class="screen" style="padding:0;">
@@ -166,7 +177,7 @@
             </div>
             <div id="chat-box"></div>
             <div id="input-area">
-                <input type="text" id="msg-input" placeholder="Type a message...">
+                <input type="text" id="msg-input" placeholder="Say something...">
                 <button onclick="sendMessage()" style="background:none; border:none; color:var(--dark-yellow); font-weight:800; cursor:pointer;">SEND</button>
             </div>
         </div>
@@ -178,7 +189,9 @@
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
         let matchTimer;
 
-        socket.on('user-count', (count) => { document.getElementById('user-count').innerText = count; });
+        socket.on('user-count', (count) => { 
+            document.getElementById('user-count').innerText = count; 
+        });
 
         function selectGender(g, icon) {
             myData.gender = g; myData.icon = icon;
@@ -187,7 +200,7 @@
         }
 
         function showScreen(id) {
-            if (id === 'screen-form' && !myData.gender) return alert("Please select gender");
+            if (id === 'screen-form' && !myData.gender) return alert("Please select gender first.");
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
@@ -196,7 +209,7 @@
             myData.name = document.getElementById('name').value;
             myData.age = document.getElementById('age').value;
             myData.origin = document.getElementById('origin').value;
-            if (!myData.name || !myData.age) return alert("Please complete the form");
+            if (!myData.name || !myData.age) return alert("Please fill in your details.");
 
             showScreen('screen-loading');
             socket.emit('find-match', myData);
@@ -216,7 +229,7 @@
         });
 
         socket.on('partner-disconnected', () => {
-            alert("Connection lost. Returning to home.");
+            alert("Partner has left the chat.");
             location.reload(); 
         });
 
