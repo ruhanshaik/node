@@ -215,6 +215,21 @@
             box.innerHTML += `<div class="msg ${side}"><span style="font-size:20px">${icon}</span><div class="bubble">${text}</div></div>`;
             box.scrollTop = box.scrollHeight;
         }
+        // Listen for the partner disconnecting
+socket.on('partner-disconnected', () => {
+    alert("Partner has disconnected. Returning to lobby...");
+    
+    // Reset UI to Gender Selection or Form
+    document.getElementById('screen-chat').classList.remove('active');
+    document.getElementById('screen-gender').classList.add('active');
+    
+    // Clear the chat box for the next match
+    document.getElementById('chat-box').innerHTML = "";
+    
+    // Reset local data if needed
+    window.partnerIcon = null;
+});
     </script>
 </body>
 </html>
+
