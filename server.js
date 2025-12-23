@@ -1,40 +1,56 @@
-<style>
-    .live-indicator {
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        background: rgba(52, 199, 89, 0.1);
-        color: #34C759;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 700;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        z-index: 10;
-    }
-    .dot {
-        width: 6px;
-        height: 6px;
-        background: #34C759;
-        border-radius: 50%;
-        animation: pulse 1.5s infinite;
-    }
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.4; }
-        100% { opacity: 1; }
-    }
-</style>
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const path = require('path');
 
-<div class="live-indicator">
-    <div class="dot"></div>
-    <span id="user-count">0</span> ONLINE
-</div>
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
 
-<script>
-    socket.on('user-count', (count) => {
-        document.getElementById('user-count').innerText = count;
+app.use(express.static(path.join(process.cwd())));
+
+let waitingUser = null;
+let onlineCount = 0; 
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'index.html'));
+});
+
+io.on('connection', (socket) => {
+    onlineCount++;
+    io.emit('user-count', onlineCount);
+
+    socket.on('find-match', (userData) => {
+        socket.userData = userData;
+        if (waitingUser && waitingUser.id !== socket.id) {
+            const partner = waitingUser;
+            const roomId = `room-${socket.id}-${partner.id}`;
+            socket.join(roomId);
+            partner.join(roomId);
+            socket.currentRoom = roomId;
+            partner.currentRoom = roomId;
+            socket.emit('match-found', partner.userData);
+            partner.emit('match-found', socket.userData);
+            waitingUser = null;
+        } else {
+            waitingUser = socket;
+        }
     });
-</script>
+
+    socket.on('send-message', (msg) => {
+        if (socket.currentRoom) {
+            socket.to(socket.currentRoom).emit('receive-message', msg);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        onlineCount = Math.max(0, onlineCount - 1);
+        io.emit('user-count', onlineCount);
+        if (waitingUser && waitingUser.id === socket.id) waitingUser = null;
+    });
+});
+
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`Indian Omegle is LIVE on port ${PORT}`);
+});
