@@ -7,13 +7,13 @@
     <style>
         :root {
             --ios-blue: #007AFF;
-            --ios-bg: #F2F2F7;
-            --ios-card: #FFFFFF;
+            --ai-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
-            background-color: var(--ios-bg);
+            font-family: var(--ios-font);
+            background-color: #f0f0f2;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -21,88 +21,95 @@
             height: 100vh;
         }
 
+        /* Compact AI-Style Container */
         .container {
-            width: 100%;
-            max-width: 400px;
-            height: 85vh;
-            background: var(--ios-card);
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 360px; /* Compact width */
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: var(--ai-shadow);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             text-align: center;
+            transition: all 0.3s ease;
         }
 
-        .screen { display: none; padding: 20px; flex-direction: column; align-items: center; height: 100%; box-sizing: border-box; }
+        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; box-sizing: border-box; }
         .active { display: flex; }
 
-        h1 { font-weight: 700; font-size: 24px; margin: 10px 0 20px 0; }
+        h1 { font-weight: 700; font-size: 22px; margin: 0 0 20px 0; letter-spacing: -0.5px; }
 
-        /* Compact Selection Section */
-        .gender-box { display: flex; gap: 15px; width: 100%; margin-bottom: 20px; }
+        /* Compact Gender Selection */
+        .gender-box { display: flex; gap: 12px; width: 100%; margin-bottom: 15px; }
         .gender-btn {
-            flex: 1; padding: 15px; border-radius: 18px; background: #F9F9FB;
+            flex: 1; padding: 15px; border-radius: 16px; background: #f4f4f7;
             cursor: pointer; transition: 0.2s; border: 2px solid transparent;
         }
-        .gender-btn.selected { border-color: var(--ios-blue); background: #E5F1FF; }
-        .gender-btn span { display: block; font-size: 35px; }
+        .gender-btn.selected { border-color: #000; background: #fff; }
+        .gender-btn span { display: block; font-size: 32px; margin-bottom: 5px; }
+        .gender-btn small { font-weight: 600; color: #555; }
 
         /* Form Styling */
-        .form-group { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .form-group { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
         input {
-            background: #F2F2F7; border: none; padding: 12px;
-            border-radius: 10px; font-size: 16px; outline: none;
+            background: #f2f2f7; border: 1px solid #e5e5ea; padding: 12px;
+            border-radius: 12px; font-size: 16px; outline: none; font-family: var(--ios-font);
         }
 
         .ios-btn {
-            width: 100%; background: var(--ios-blue); color: white;
+            width: 100%; background: #000; color: #fff;
             border: none; padding: 14px; border-radius: 14px;
-            font-weight: 600; font-size: 17px; cursor: pointer;
+            font-weight: 600; font-size: 16px; cursor: pointer; transition: transform 0.1s;
         }
+        .ios-btn:active { transform: scale(0.98); }
 
-        /* Your Custom Loader CSS */
+        /* Your Custom Black & White Loader */
+        .loader-wrapper {
+            background: #fff; padding: 30px; border-radius: 20px; margin: 20px 0;
+        }
         .loader {
             width: 80px; aspect-ratio: 1; border: 10px solid #000;
-            box-sizing: border-box; background: 
-                radial-gradient(farthest-side,#fff 98%,#0000) top,
-                radial-gradient(farthest-side,#fff 98%,#0000) top,
-                radial-gradient(farthest-side,#fff 98%,#0000) left,
-                radial-gradient(farthest-side,#fff 98%,#0000) right,
-                radial-gradient(farthest-side,#fff 98%,#0000) bottom, #000;
-            background-size: 20px 20px; background-repeat: no-repeat;
-            filter: blur(4px) contrast(10); animation: l19 2s infinite;
-            margin: 40px auto;
+            box-sizing: border-box;
+            background: 
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/80% 80%, #000;
+            background-repeat: no-repeat;
+            filter: blur(4px) contrast(10); 
+            animation: l17 1s infinite alternate;
         }
-        @keyframes l19 {
-            0%   {background-position:top,top,left,right,bottom}
-            25%  {background-position:right,top,left,right,bottom}
-            50%  {background-position:bottom,top,left,right,bottom}
-            75%  {background-position:left,top,left,right,bottom}
-            100% {background-position:top,top,left,right,bottom}
+        @keyframes l17 {
+            0%   {background-position:50%,50%,50%,50%,50%,50%,50%}
+            25%  {background-position:0 0,50%,50%,50%,50%,50%,50%}
+            50%  {background-position:0 0,100% 0,50%,50%,50%,50%,50%}
+            75%  {background-position:0 0,100% 0,100% 100%,50%,50%,50%,50%}
+            100% {background-position:0 0,100% 0,100% 100%,0 100%,50%,50%,50%}
         }
 
-        #timeout-msg { color: #FF3B30; font-size: 14px; margin-top: 15px; display: none; }
+        #timeout-msg { color: #ff3b30; font-size: 13px; margin-top: 10px; display: none; font-weight: 500; }
 
-        /* Chat UI */
-        #chat-header { padding: 12px; border-bottom: 0.5px solid #C6C6C8; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;}
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px; }
-        .msg { display: flex; align-items: flex-end; gap: 5px; max-width: 85%; }
+        /* Chat UI (Expansion) */
+        #screen-chat.active { height: 85vh; width: 400px; max-width: 95%; }
+        #chat-header { padding: 12px; border-bottom: 0.5px solid #e5e5ea; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;}
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; }
+        .msg { display: flex; align-items: flex-end; gap: 8px; max-width: 80%; }
         .msg.me { align-self: flex-end; flex-direction: row-reverse; }
-        .bubble { padding: 8px 14px; border-radius: 18px; font-size: 15px; }
-        .me .bubble { background: var(--ios-blue); color: white; }
-        .them .bubble { background: #E9E9EB; color: black; }
+        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.4; }
+        .me .bubble { background: #000; color: #fff; }
+        .them .bubble { background: #e9e9eb; color: #000; }
 
-        #input-area { padding: 10px; display: flex; gap: 8px; width: 100%; box-sizing: border-box; border-top: 0.5px solid #C6C6C8; }
-        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #C6C6C8; padding: 8px 15px; }
+        #input-area { padding: 12px; display: flex; gap: 10px; width: 100%; box-sizing: border-box; border-top: 0.5px solid #e5e5ea; }
+        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #e5e5ea; padding: 10px 15px; font-size: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="main-container">
         <div id="screen-gender" class="screen active">
             <h1>Indian Omegle</h1>
-            <p>Select your gender</p>
             <div class="gender-box">
                 <div class="gender-btn" onclick="selectGender('male', '👨')">
                     <span>👨</span>
@@ -113,37 +120,39 @@
                     <small>Female</small>
                 </div>
             </div>
-            <button class="ios-btn" onclick="showScreen('screen-form')">Continue</button>
+            <button class="ios-btn" onclick="showScreen('screen-form')">Next</button>
         </div>
 
         <div id="screen-form" class="screen">
-            <h1>About You</h1>
+            <h1>Identity</h1>
             <div class="form-group">
-                <input type="text" id="name" placeholder="Name">
+                <input type="text" id="name" placeholder="Full Name">
                 <input type="number" id="age" placeholder="Age">
-                <input type="text" id="origin" placeholder="City/Country">
+                <input type="text" id="origin" placeholder="Location">
             </div>
-            <button class="ios-btn" onclick="startMatching()">Find Match</button>
+            <button class="ios-btn" onclick="startMatching()">Enter Chat</button>
         </div>
 
         <div id="screen-loading" class="screen">
-            <h1>Finding Match...</h1>
-            <div class="loader"></div>
-            <p id="timeout-msg">No one is online right now. Please try again in a few minutes.</p>
+            <h1>Syncing...</h1>
+            <div class="loader-wrapper">
+                <div class="loader"></div>
+            </div>
+            <p id="timeout-msg">System Busy: No active users found. Try again shortly.</p>
         </div>
 
         <div id="screen-chat" class="screen" style="padding:0;">
             <div id="chat-header">
-                <span id="p-icon" style="font-size: 24px;">👤</span>
+                <span id="p-icon" style="font-size: 26px;">👤</span>
                 <div style="text-align: left;">
-                    <b id="p-name">Stranger</b><br>
-                    <small id="p-meta" style="color: gray;"></small>
+                    <b id="p-name" style="font-size: 16px;">Stranger</b><br>
+                    <small id="p-meta" style="color: #8e8e93;"></small>
                 </div>
             </div>
             <div id="chat-box"></div>
             <div id="input-area">
-                <input type="text" id="msg-input" placeholder="Message">
-                <button onclick="sendMessage()" style="background:none; border:none; color:var(--ios-blue); font-weight:600;">Send</button>
+                <input type="text" id="msg-input" placeholder="Message...">
+                <button onclick="sendMessage()" style="background:none; border:none; color:#000; font-weight:700; font-size: 15px; cursor:pointer;">Send</button>
             </div>
         </div>
     </div>
@@ -161,7 +170,7 @@
         }
 
         function showScreen(id) {
-            if (id === 'screen-form' && !myData.gender) return alert("Select Gender");
+            if (id === 'screen-form' && !myData.gender) return alert("Please select your gender.");
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
@@ -171,12 +180,11 @@
             myData.age = document.getElementById('age').value;
             myData.origin = document.getElementById('origin').value;
 
-            if (!myData.name || !myData.age) return alert("Complete the form");
+            if (!myData.name || !myData.age) return alert("Please provide your name and age.");
 
             showScreen('screen-loading');
             socket.emit('find-match', myData);
 
-            // 15 Second Timeout Logic
             matchTimer = setTimeout(() => {
                 document.getElementById('timeout-msg').style.display = 'block';
             }, 15000);
@@ -187,7 +195,7 @@
             showScreen('screen-chat');
             document.getElementById('p-name').innerText = partner.name;
             document.getElementById('p-icon').innerText = partner.icon;
-            document.getElementById('p-meta').innerText = `${partner.age} • ${partner.origin}`;
+            document.getElementById('p-meta').innerText = `${partner.age} yrs • ${partner.origin}`;
             window.partnerIcon = partner.icon;
         });
 
@@ -204,7 +212,7 @@
 
         function appendMsg(side, text, icon) {
             const box = document.getElementById('chat-box');
-            box.innerHTML += `<div class="msg ${side}"><span>${icon}</span><div class="bubble">${text}</div></div>`;
+            box.innerHTML += `<div class="msg ${side}"><span style="font-size:20px">${icon}</span><div class="bubble">${text}</div></div>`;
             box.scrollTop = box.scrollHeight;
         }
     </script>
