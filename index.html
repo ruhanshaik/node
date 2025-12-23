@@ -6,7 +6,7 @@
     <title>OMIGLE | Connect</title>
     <style>
         :root {
-            --dark-yellow: #CC9900; /* Dark Yellow */
+            --dark-yellow: #CC9900;
             --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
             --ai-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
@@ -37,8 +37,9 @@
         /* Branding Styles */
         .header-logo {
             width: 80px;
-            height: auto;
+            height: 80px;
             margin: 20px auto 10px;
+            object-fit: contain;
         }
 
         .brand-name {
@@ -68,45 +69,42 @@
         .screen { display: none; padding: 25px; flex-direction: column; align-items: center; }
         .active { display: flex; }
 
-        /* Buttons & Inputs */
+        /* Gender Selection */
         .gender-box { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
         .gender-btn {
             flex: 1; padding: 15px; border-radius: 16px; background: #F4F4F7;
             cursor: pointer; border: 2px solid transparent; transition: 0.2s;
         }
         .gender-btn.selected { border-color: var(--dark-yellow); background: #FFF; }
-        
+        .gender-btn span { font-size: 30px; }
+
+        /* Buttons & Inputs */
         .ios-btn {
             width: 100%; background: #000; color: #FFF;
             border: none; padding: 14px; border-radius: 14px;
             font-weight: 700; font-size: 16px; cursor: pointer;
         }
-        .ios-btn:hover { background: var(--dark-yellow); }
 
         input {
             width: 100%; background: #F2F2F7; border: 1px solid #E5E5EA;
             padding: 12px; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box;
         }
 
-        /* Your Custom Black Loader */
-        .loader-wrapper { background: #FFF; padding: 20px; border-radius: 20px; }
-        .loader {
-            width: 60px; aspect-ratio: 1; border: 8px solid #000;
-            box-sizing: border-box;
-            background: 
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/80% 80%, #000;
-            background-repeat: no-repeat;
-            filter: blur(4px) contrast(10); 
-            animation: l17 1s infinite alternate;
+        /* Rotating Icon Loader Logic */
+        .rotating-logo {
+            width: 100px;
+            height: 100px;
+            margin: 40px auto;
+            animation: spinPause 5s infinite linear;
         }
-        @keyframes l17 {
-            0%   {background-position:50%,50%,50%,50%,50%,50%,50%}
-            100% {background-position:0 0,100% 0,100% 100%,0 100%,50%,50%,50%}
+
+        @keyframes spinPause {
+            0% { transform: rotate(0deg); }
+            60% { transform: rotate(1080deg); } /* Fast spin for 3 seconds (60% of 5s) */
+            100% { transform: rotate(1080deg); } /* Idle for 2 seconds (40% of 5s) */
         }
+
+        #timeout-msg { color: #FF3B30; display: none; font-size: 12px; font-weight: 600; margin-top: 10px; }
 
         /* Chat UI */
         #chat-header { 
@@ -130,7 +128,7 @@
             <span id="user-count">0</span> LIVE
         </div>
 
-        <img src="Omigle.png" alt="Omigle Logo" class="header-logo">
+        <img src="Omigle.png" alt="Logo" class="header-logo">
         <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
 
         <div id="screen-gender" class="screen active">
@@ -148,14 +146,14 @@
         <div id="screen-form" class="screen">
             <input type="text" id="name" placeholder="First Name">
             <input type="number" id="age" placeholder="Age">
-            <input type="text" id="origin" placeholder="Location">
+            <input type="text" id="origin" placeholder="City/Country">
             <button class="ios-btn" onclick="startMatching()">Connect Now</button>
         </div>
 
         <div id="screen-loading" class="screen">
-            <div class="loader-wrapper"><div class="loader"></div></div>
-            <p style="font-size: 12px; color: #888;">Searching for a match...</p>
-            <p id="timeout-msg" style="color:red; display:none; font-size:11px;">No users available. Try later.</p>
+            <img src="Omigle.png" class="rotating-logo" alt="Searching...">
+            <p style="font-size: 14px; font-weight: 600; color: #444;">Connecting to global servers...</p>
+            <p id="timeout-msg">System Busy: No active users found. Try again shortly.</p>
         </div>
 
         <div id="screen-chat" class="screen" style="padding:0;">
@@ -168,7 +166,7 @@
             </div>
             <div id="chat-box"></div>
             <div id="input-area">
-                <input type="text" id="msg-input" placeholder="Message...">
+                <input type="text" id="msg-input" placeholder="Type a message...">
                 <button onclick="sendMessage()" style="background:none; border:none; color:var(--dark-yellow); font-weight:800; cursor:pointer;">SEND</button>
             </div>
         </div>
@@ -189,7 +187,7 @@
         }
 
         function showScreen(id) {
-            if (id === 'screen-form' && !myData.gender) return alert("Select Gender");
+            if (id === 'screen-form' && !myData.gender) return alert("Please select gender");
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
@@ -198,12 +196,14 @@
             myData.name = document.getElementById('name').value;
             myData.age = document.getElementById('age').value;
             myData.origin = document.getElementById('origin').value;
-            if (!myData.name || !myData.age) return alert("Fill all fields");
+            if (!myData.name || !myData.age) return alert("Please complete the form");
 
             showScreen('screen-loading');
             socket.emit('find-match', myData);
 
-            matchTimer = setTimeout(() => { document.getElementById('timeout-msg').style.display = 'block'; }, 15000);
+            matchTimer = setTimeout(() => { 
+                document.getElementById('timeout-msg').style.display = 'block'; 
+            }, 15000);
         }
 
         socket.on('match-found', (partner) => {
@@ -216,7 +216,7 @@
         });
 
         socket.on('partner-disconnected', () => {
-            alert("Partner left. Searching for someone else...");
+            alert("Connection lost. Returning to home.");
             location.reload(); 
         });
 
