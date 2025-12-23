@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Indian Omegle</title>
+    <title>OMIGLE | Connect</title>
     <style>
         :root {
-            --ios-blue: #007AFF;
-            --ai-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --dark-yellow: #CC9900; /* Dark Yellow */
             --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+            --ai-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
         body {
             font-family: var(--ios-font);
-            background-color: #f0f0f2;
+            background-color: #F0F0F2;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -21,61 +21,83 @@
             height: 100vh;
         }
 
-        /* Compact AI-Style Container */
         .container {
             width: 90%;
-            max-width: 360px; /* Compact width */
-            background: #ffffff;
+            max-width: 360px;
+            background: #FFFFFF;
             border-radius: 24px;
             box-shadow: var(--ai-shadow);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             text-align: center;
-            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; box-sizing: border-box; }
+        /* Branding Styles */
+        .header-logo {
+            width: 80px;
+            height: auto;
+            margin: 20px auto 10px;
+        }
+
+        .brand-name {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+        }
+        .brand-omi { color: #000000; }
+        .brand-gle { color: var(--dark-yellow); }
+
+        .live-indicator {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--dark-yellow);
+        }
+
+        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; }
         .active { display: flex; }
 
-        h1 { font-weight: 700; font-size: 22px; margin: 0 0 20px 0; letter-spacing: -0.5px; }
-
-        /* Compact Gender Selection */
-        .gender-box { display: flex; gap: 12px; width: 100%; margin-bottom: 15px; }
+        /* Buttons & Inputs */
+        .gender-box { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
         .gender-btn {
-            flex: 1; padding: 15px; border-radius: 16px; background: #f4f4f7;
-            cursor: pointer; transition: 0.2s; border: 2px solid transparent;
+            flex: 1; padding: 15px; border-radius: 16px; background: #F4F4F7;
+            cursor: pointer; border: 2px solid transparent; transition: 0.2s;
         }
-        .gender-btn.selected { border-color: #000; background: #fff; }
-        .gender-btn span { display: block; font-size: 32px; margin-bottom: 5px; }
-        .gender-btn small { font-weight: 600; color: #555; }
-
-        /* Form Styling */
-        .form-group { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-        input {
-            background: #f2f2f7; border: 1px solid #e5e5ea; padding: 12px;
-            border-radius: 12px; font-size: 16px; outline: none; font-family: var(--ios-font);
-        }
-
+        .gender-btn.selected { border-color: var(--dark-yellow); background: #FFF; }
+        
         .ios-btn {
-            width: 100%; background: #000; color: #fff;
+            width: 100%; background: #000; color: #FFF;
             border: none; padding: 14px; border-radius: 14px;
-            font-weight: 600; font-size: 16px; cursor: pointer; transition: transform 0.1s;
+            font-weight: 700; font-size: 16px; cursor: pointer;
         }
-        .ios-btn:active { transform: scale(0.98); }
+        .ios-btn:hover { background: var(--dark-yellow); }
 
-        /* Your Custom Black & White Loader */
-        .loader-wrapper {
-            background: #fff; padding: 30px; border-radius: 20px; margin: 20px 0;
+        input {
+            width: 100%; background: #F2F2F7; border: 1px solid #E5E5EA;
+            padding: 12px; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box;
         }
+
+        /* Your Custom Black Loader */
+        .loader-wrapper { background: #FFF; padding: 20px; border-radius: 20px; }
         .loader {
-            width: 80px; aspect-ratio: 1; border: 10px solid #000;
+            width: 60px; aspect-ratio: 1; border: 8px solid #000;
             box-sizing: border-box;
             background: 
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
-                radial-gradient(farthest-side,#fff 98%,#0000) 50%/20px 20px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
+                radial-gradient(farthest-side,#fff 98%,#0000) 50%/15px 15px,
                 radial-gradient(farthest-side,#fff 98%,#0000) 50%/80% 80%, #000;
             background-repeat: no-repeat;
             filter: blur(4px) contrast(10); 
@@ -83,76 +105,71 @@
         }
         @keyframes l17 {
             0%   {background-position:50%,50%,50%,50%,50%,50%,50%}
-            25%  {background-position:0 0,50%,50%,50%,50%,50%,50%}
-            50%  {background-position:0 0,100% 0,50%,50%,50%,50%,50%}
-            75%  {background-position:0 0,100% 0,100% 100%,50%,50%,50%,50%}
             100% {background-position:0 0,100% 0,100% 100%,0 100%,50%,50%,50%}
         }
 
-        #timeout-msg { color: #ff3b30; font-size: 13px; margin-top: 10px; display: none; font-weight: 500; }
+        /* Chat UI */
+        #chat-header { 
+            padding: 15px; border-bottom: 1px solid #EEE; 
+            display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;
+        }
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; height: 350px; display: flex; flex-direction: column; gap: 10px; }
+        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 15px; max-width: 80%; }
+        .me .bubble { background: #000; color: #FFF; align-self: flex-end; }
+        .them .bubble { background: #F2F2F7; color: #000; align-self: flex-start; border: 1px solid var(--dark-yellow); }
 
-        /* Chat UI (Expansion) */
-        #screen-chat.active { height: 85vh; width: 400px; max-width: 95%; }
-        #chat-header { padding: 12px; border-bottom: 0.5px solid #e5e5ea; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;}
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; }
-        .msg { display: flex; align-items: flex-end; gap: 8px; max-width: 80%; }
-        .msg.me { align-self: flex-end; flex-direction: row-reverse; }
-        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.4; }
-        .me .bubble { background: #000; color: #fff; }
-        .them .bubble { background: #e9e9eb; color: #000; }
-
-        #input-area { padding: 12px; display: flex; gap: 10px; width: 100%; box-sizing: border-box; border-top: 0.5px solid #e5e5ea; }
-        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #e5e5ea; padding: 10px 15px; font-size: 15px; }
+        #input-area { padding: 12px; display: flex; gap: 10px; width: 100%; box-sizing: border-box; border-top: 1px solid #EEE; }
+        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #E5E5EA; padding: 10px 15px; margin-bottom: 0; }
     </style>
 </head>
 <body>
 
-    <div class="container" id="main-container">
+    <div class="container">
+        <div class="live-indicator">
+            <div style="width:6px; height:6px; background:var(--dark-yellow); border-radius:50%;"></div>
+            <span id="user-count">0</span> LIVE
+        </div>
+
+        <img src="Omigle.png" alt="Omigle Logo" class="header-logo">
+        <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
+
         <div id="screen-gender" class="screen active">
-            <h1>Indian Omegle</h1>
             <div class="gender-box">
                 <div class="gender-btn" onclick="selectGender('male', '👨')">
-                    <span>👨</span>
-                    <small>Male</small>
+                    <span>👨</span><br><small>Male</small>
                 </div>
                 <div class="gender-btn" onclick="selectGender('female', '👩')">
-                    <span>👩</span>
-                    <small>Female</small>
+                    <span>👩</span><br><small>Female</small>
                 </div>
             </div>
             <button class="ios-btn" onclick="showScreen('screen-form')">Next</button>
         </div>
 
         <div id="screen-form" class="screen">
-            <h1>Identity</h1>
-            <div class="form-group">
-                <input type="text" id="name" placeholder="Full Name">
-                <input type="number" id="age" placeholder="Age">
-                <input type="text" id="origin" placeholder="Location">
-            </div>
-            <button class="ios-btn" onclick="startMatching()">Enter Chat</button>
+            <input type="text" id="name" placeholder="First Name">
+            <input type="number" id="age" placeholder="Age">
+            <input type="text" id="origin" placeholder="Location">
+            <button class="ios-btn" onclick="startMatching()">Connect Now</button>
         </div>
 
         <div id="screen-loading" class="screen">
-            <h1>Syncing...</h1>
-            <div class="loader-wrapper">
-                <div class="loader"></div>
-            </div>
-            <p id="timeout-msg">System Busy: No active users found. Try again shortly.</p>
+            <div class="loader-wrapper"><div class="loader"></div></div>
+            <p style="font-size: 12px; color: #888;">Searching for a match...</p>
+            <p id="timeout-msg" style="color:red; display:none; font-size:11px;">No users available. Try later.</p>
         </div>
 
         <div id="screen-chat" class="screen" style="padding:0;">
             <div id="chat-header">
-                <span id="p-icon" style="font-size: 26px;">👤</span>
+                <span id="p-icon" style="font-size: 24px;">👤</span>
                 <div style="text-align: left;">
-                    <b id="p-name" style="font-size: 16px;">Stranger</b><br>
-                    <small id="p-meta" style="color: #8e8e93;"></small>
+                    <b id="p-name" style="font-size: 14px;">Stranger</b><br>
+                    <small id="p-meta" style="color: var(--dark-yellow); font-size: 10px;"></small>
                 </div>
             </div>
             <div id="chat-box"></div>
             <div id="input-area">
                 <input type="text" id="msg-input" placeholder="Message...">
-                <button onclick="sendMessage()" style="background:none; border:none; color:#000; font-weight:700; font-size: 15px; cursor:pointer;">Send</button>
+                <button onclick="sendMessage()" style="background:none; border:none; color:var(--dark-yellow); font-weight:800; cursor:pointer;">SEND</button>
             </div>
         </div>
     </div>
@@ -163,6 +180,8 @@
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
         let matchTimer;
 
+        socket.on('user-count', (count) => { document.getElementById('user-count').innerText = count; });
+
         function selectGender(g, icon) {
             myData.gender = g; myData.icon = icon;
             document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
@@ -170,7 +189,7 @@
         }
 
         function showScreen(id) {
-            if (id === 'screen-form' && !myData.gender) return alert("Please select your gender.");
+            if (id === 'screen-form' && !myData.gender) return alert("Select Gender");
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
@@ -179,15 +198,12 @@
             myData.name = document.getElementById('name').value;
             myData.age = document.getElementById('age').value;
             myData.origin = document.getElementById('origin').value;
-
-            if (!myData.name || !myData.age) return alert("Please provide your name and age.");
+            if (!myData.name || !myData.age) return alert("Fill all fields");
 
             showScreen('screen-loading');
             socket.emit('find-match', myData);
 
-            matchTimer = setTimeout(() => {
-                document.getElementById('timeout-msg').style.display = 'block';
-            }, 15000);
+            matchTimer = setTimeout(() => { document.getElementById('timeout-msg').style.display = 'block'; }, 15000);
         }
 
         socket.on('match-found', (partner) => {
@@ -195,41 +211,31 @@
             showScreen('screen-chat');
             document.getElementById('p-name').innerText = partner.name;
             document.getElementById('p-icon').innerText = partner.icon;
-            document.getElementById('p-meta').innerText = `${partner.age} yrs • ${partner.origin}`;
+            document.getElementById('p-meta').innerText = `${partner.age} • ${partner.origin}`;
             window.partnerIcon = partner.icon;
+        });
+
+        socket.on('partner-disconnected', () => {
+            alert("Partner left. Searching for someone else...");
+            location.reload(); 
         });
 
         function sendMessage() {
             const input = document.getElementById('msg-input');
             if (input.value.trim()) {
                 socket.emit('send-message', input.value);
-                appendMsg('me', input.value, myData.icon);
+                appendMsg('me', input.value);
                 input.value = '';
             }
         }
 
-        socket.on('receive-message', (msg) => appendMsg('them', msg, window.partnerIcon));
+        socket.on('receive-message', (msg) => appendMsg('them', msg));
 
-        function appendMsg(side, text, icon) {
+        function appendMsg(side, text) {
             const box = document.getElementById('chat-box');
-            box.innerHTML += `<div class="msg ${side}"><span style="font-size:20px">${icon}</span><div class="bubble">${text}</div></div>`;
+            box.innerHTML += `<div class="${side}" style="display:flex; flex-direction:column;"><div class="bubble">${text}</div></div>`;
             box.scrollTop = box.scrollHeight;
         }
-        // Listen for the partner disconnecting
-socket.on('partner-disconnected', () => {
-    alert("Partner has disconnected. Returning to lobby...");
-    
-    // Reset UI to Gender Selection or Form
-    document.getElementById('screen-chat').classList.remove('active');
-    document.getElementById('screen-gender').classList.add('active');
-    
-    // Clear the chat box for the next match
-    document.getElementById('chat-box').innerHTML = "";
-    
-    // Reset local data if needed
-    window.partnerIcon = null;
-});
     </script>
 </body>
 </html>
-
