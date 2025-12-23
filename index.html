@@ -2,81 +2,245 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BangaloreConnect</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #f4f4f9; padding: 20px; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; margin: auto; }
-        button { padding: 12px 24px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; transition: 0.3s; }
-        #on-btn { background: #6c757d; color: white; }
-        #match-btn { background: #007bff; color: white; }
-        #match-btn:disabled { background: #ccc; cursor: not-allowed; }
-        #chat-box { height: 300px; border: 1px solid #ddd; overflow-y: auto; margin: 20px 0; padding: 10px; text-align: left; background: #fafafa; }
-        input { width: 70%; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+        :root {
+            --ios-blue: #007AFF;
+            --ios-green: #34C759;
+            --ios-gray: #8E8E93;
+            --ios-bg: #F2F2F7;
+            --ios-card: #FFFFFF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--ios-bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #000;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            height: 90vh;
+            background: var(--ios-card);
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Screen Transitions */
+        .screen { display: none; padding: 25px; flex-direction: column; height: 100%; box-sizing: border-box; }
+        .active { display: flex; }
+
+        h1 { font-weight: 700; font-size: 28px; margin-bottom: 30px; }
+
+        /* Gender Selection Styles */
+        .gender-box {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .gender-btn {
+            flex: 1;
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: #F9F9FB;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 40px;
+            text-align: center;
+        }
+        .gender-btn:active { transform: scale(0.95); }
+        .gender-btn.selected { border-color: var(--ios-blue); background: #E5F1FF; }
+        .gender-label { font-size: 14px; margin-top: 8px; font-weight: 500; display: block; }
+
+        /* Form Styles */
+        input {
+            background: #F2F2F7;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .ios-btn {
+            background: var(--ios-blue);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 17px;
+            cursor: pointer;
+            margin-top: auto;
+        }
+
+        /* Chat UI Styles */
+        #chat-header {
+            padding: 15px;
+            border-bottom: 0.5px solid #C6C6C8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        #partner-avatar { font-size: 30px; }
+        #partner-info { text-align: left; }
+        #partner-name { font-weight: 600; font-size: 17px; }
+        #partner-meta { font-size: 12px; color: var(--ios-gray); }
+
+        #chat-box {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .msg-container { display: flex; align-items: flex-end; gap: 8px; max-width: 80%; }
+        .msg-container.me { align-self: flex-end; flex-direction: row-reverse; }
+
+        .avatar-small { font-size: 20px; }
+
+        .bubble {
+            padding: 10px 16px;
+            border-radius: 18px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .me .bubble { background: var(--ios-blue); color: white; border-bottom-right-radius: 4px; }
+        .them .bubble { background: #E9E9EB; color: black; border-bottom-left-radius: 4px; }
+
+        #input-area {
+            padding: 10px 15px 30px;
+            background: #FFF;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-top: 0.5px solid #C6C6C8;
+        }
+        #msg-input { flex: 1; margin-bottom: 0; border-radius: 20px; padding: 10px 18px; border: 1px solid #C6C6C8; background: #FFF; }
+        #send-btn { background: none; color: var(--ios-blue); font-weight: 600; border: none; font-size: 17px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h1>BangaloreConnect</h1>
-        
-        <div id="lobby">
-            <button id="on-btn">Data: OFF</button>
-            <br>
-            <button id="match-btn" disabled>Search for Match</button>
-            <p id="status">Toggle Data to start</p>
+    <div class="container">
+        <div id="screen-gender" class="screen active">
+            <h1>Are you...</h1>
+            <div class="gender-box">
+                <div class="gender-btn" onclick="selectGender('male', '👨')">
+                    <span>👨</span>
+                    <span class="gender-label">Male</span>
+                </div>
+                <div class="gender-btn" onclick="selectGender('female', '👩')">
+                    <span>👩</span>
+                    <span class="gender-label">Female</span>
+                </div>
+            </div>
+            <button class="ios-btn" onclick="nextScreen('screen-form')">Continue</button>
         </div>
 
-        <div id="chat-section" style="display:none;">
+        <div id="screen-form" class="screen">
+            <h1>About You</h1>
+            <input type="text" id="name" placeholder="Name">
+            <input type="number" id="age" placeholder="Age">
+            <input type="text" id="origin" placeholder="Origin (City/Country)">
+            <button id="match-btn" class="ios-btn" onclick="startMatching()">Find Match</button>
+        </div>
+
+        <div id="screen-chat" class="screen" style="padding:0;">
+            <div id="chat-header">
+                <div id="partner-avatar">👤</div>
+                <div id="partner-info">
+                    <div id="partner-name">Searching...</div>
+                    <div id="partner-meta">BangaloreConnect</div>
+                </div>
+            </div>
             <div id="chat-box"></div>
-            <input type="text" id="msg-input" placeholder="Type a message...">
-            <button id="send-btn" style="background: #28a745; color: white;">Send</button>
+            <div id="input-area">
+                <input type="text" id="msg-input" placeholder="iMessage">
+                <button id="send-btn">Send</button>
+            </div>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
         const socket = io();
-        const onBtn = document.getElementById('on-btn');
-        const matchBtn = document.getElementById('match-btn');
-        const status = document.getElementById('status');
-        const chatSection = document.getElementById('chat-section');
-        const lobby = document.getElementById('lobby');
+        let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
 
-        onBtn.onclick = () => {
-            onBtn.innerText = "Data: ON";
-            onBtn.style.background = "#28a745";
-            matchBtn.disabled = false;
-            status.innerText = "Ready to connect!";
-        };
+        function selectGender(g, icon) {
+            myData.gender = g;
+            myData.icon = icon;
+            document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
 
-        matchBtn.onclick = () => {
-            socket.emit('find-match');
-            matchBtn.disabled = true;
-            status.innerText = "Finding a partner in Bangalore...";
-        };
+        function nextScreen(id) {
+            if (!myData.gender) return alert("Please select gender");
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
 
-        socket.on('match-found', () => {
-            lobby.style.display = 'none';
-            chatSection.style.display = 'block';
+        function startMatching() {
+            myData.name = document.getElementById('name').value;
+            myData.age = document.getElementById('age').value;
+            myData.origin = document.getElementById('origin').value;
+
+            if (!myData.name || !myData.age) return alert("Fill in details");
+
+            document.getElementById('match-btn').innerText = "Searching...";
+            socket.emit('find-match', myData);
+        }
+
+        socket.on('match-found', (partnerData) => {
+            nextScreen('screen-chat');
+            document.getElementById('partner-name').innerText = partnerData.name;
+            document.getElementById('partner-avatar').innerText = partnerData.icon;
+            document.getElementById('partner-meta').innerText = `${partnerData.age} • ${partnerData.origin}`;
+            window.partnerIcon = partnerData.icon;
         });
 
-        document.getElementById('send-btn').onclick = () => {
+        document.getElementById('send-btn').onclick = sendMessage;
+        document.getElementById('msg-input').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
+
+        function sendMessage() {
             const input = document.getElementById('msg-input');
-            if (input.value.trim() !== "") {
-                socket.emit('send-message', input.value);
-                addMessage("You", input.value);
-                input.value = "";
+            const val = input.value.trim();
+            if (val) {
+                socket.emit('send-message', val);
+                appendMessage('me', val, myData.icon);
+                input.value = '';
             }
-        };
+        }
 
         socket.on('receive-message', (msg) => {
-            addMessage("Stranger", msg);
+            appendMessage('them', msg, window.partnerIcon);
         });
 
-        function addMessage(sender, text) {
+        function appendMessage(side, text, icon) {
             const box = document.getElementById('chat-box');
-            box.innerHTML += `<div><strong>${sender}:</strong> ${text}</div>`;
+            const html = `
+                <div class="msg-container ${side}">
+                    <div class="avatar-small">${icon}</div>
+                    <div class="bubble">${text}</div>
+                </div>
+            `;
+            box.innerHTML += html;
             box.scrollTop = box.scrollHeight;
         }
     </script>
