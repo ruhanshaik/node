@@ -10,23 +10,7 @@
             --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
             --ai-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
-    .mic-btn {
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 0 5px;
-    transition: transform 0.2s;
-}
-.mic-btn.recording {
-    color: #FF3B30; /* iOS Red for recording */
-    animation: pulse 1s infinite;
-}
-audio {
-    max-width: 100%;
-    height: 35px;
-    margin-top: 5px;
-}
+
         body {
             font-family: var(--ios-font);
             background-color: #F0F0F2;
@@ -119,14 +103,13 @@ audio {
             width: 100px;
             height: 100px;
             object-fit: contain;
-            /* 3s spin + 2s pause = 5s total animation cycle */
             animation: spinRightPause 5s infinite ease-in-out;
         }
 
         @keyframes spinRightPause {
             0% { transform: rotate(0deg); }
-            60% { transform: rotate(1080deg); } /* Spins 3 full times in 3 seconds (60% of 5s) */
-            100% { transform: rotate(1080deg); } /* Stays still for 2 seconds (40% of 5s) */
+            60% { transform: rotate(1080deg); } 
+            100% { transform: rotate(1080deg); } 
         }
 
         #timeout-msg { color: #FF3B30; display: none; font-size: 12px; font-weight: 600; margin-top: 10px; }
@@ -137,12 +120,36 @@ audio {
             display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;
         }
         #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; height: 350px; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 15px; max-width: 80%; }
+        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 15px; max-width: 85%; word-wrap: break-word; }
         .me .bubble { background: #000; color: #FFF; align-self: flex-end; }
         .them .bubble { background: #F2F2F7; color: #000; align-self: flex-start; border: 1px solid var(--dark-yellow); }
 
-        #input-area { padding: 12px; display: flex; gap: 10px; width: 100%; box-sizing: border-box; border-top: 1px solid #EEE; }
-        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #E5E5EA; padding: 10px 15px; margin-bottom: 0; }
+        /* Voice/Input Area */
+        #input-area { padding: 12px; display: flex; gap: 10px; width: 100%; box-sizing: border-box; border-top: 1px solid #EEE; align-items: center; }
+        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #E5E5EA; padding: 10px 15px; margin-bottom: 0; outline: none; }
+        
+        .mic-btn {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: transform 0.2s;
+        }
+        .mic-btn.recording {
+            color: #FF3B30;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        audio {
+            max-width: 100%;
+            height: 35px;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -179,8 +186,8 @@ audio {
             <div class="logo-loader-container">
                 <img src="Omigle.png" class="rotating-logo-img" alt="Searching...">
             </div>
-            <p style="font-size: 14px; font-weight: 600; color: #444;">Syncing with partners...</p>
-            <p id="timeout-msg">No one is currently available. Please wait or refresh.</p>
+            <p style="font-size: 14px; font-weight: 600; color: #444;">Connecting to partner...</p>
+            <p id="timeout-msg">No one is currently available. Please wait.</p>
         </div>
 
         <div id="screen-chat" class="screen" style="padding:0;">
@@ -193,6 +200,7 @@ audio {
             </div>
             <div id="chat-box"></div>
             <div id="input-area">
+                <button id="mic-btn" class="mic-btn">🎙️</button>
                 <input type="text" id="msg-input" placeholder="Say something...">
                 <button onclick="sendMessage()" style="background:none; border:none; color:var(--dark-yellow); font-weight:800; cursor:pointer;">SEND</button>
             </div>
@@ -205,6 +213,11 @@ audio {
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
         let matchTimer;
 
+        // Voice Variables
+        let mediaRecorder;
+        let audioChunks = [];
+        const micBtn = document.getElementById('mic-btn');
+
         socket.on('user-count', (count) => { 
             document.getElementById('user-count').innerText = count; 
         });
@@ -216,7 +229,7 @@ audio {
         }
 
         function showScreen(id) {
-            if (id === 'screen-form' && !myData.gender) return alert("Please select gender first.");
+            if (id === 'screen-form' && !myData.gender) return alert("Select gender first.");
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
@@ -225,7 +238,7 @@ audio {
             myData.name = document.getElementById('name').value;
             myData.age = document.getElementById('age').value;
             myData.origin = document.getElementById('origin').value;
-            if (!myData.name || !myData.age) return alert("Please fill in your details.");
+            if (!myData.name || !myData.age) return alert("Fill in your details.");
 
             showScreen('screen-loading');
             socket.emit('find-match', myData);
@@ -241,31 +254,82 @@ audio {
             document.getElementById('p-name').innerText = partner.name;
             document.getElementById('p-icon').innerText = partner.icon;
             document.getElementById('p-meta').innerText = `${partner.age} • ${partner.origin}`;
-            window.partnerIcon = partner.icon;
         });
 
         socket.on('partner-disconnected', () => {
-            alert("Partner has left the chat.");
+            alert("Partner has left.");
             location.reload(); 
         });
 
+        // SEND TEXT MESSAGE
         function sendMessage() {
             const input = document.getElementById('msg-input');
-            if (input.value.trim()) {
-                socket.emit('send-message', input.value);
-                appendMsg('me', input.value);
+            const val = input.value.trim();
+            if (val) {
+                socket.emit('send-message', { type: 'text', data: val });
+                appendMsg('me', { type: 'text', data: val });
                 input.value = '';
             }
         }
 
-        socket.on('receive-message', (msg) => appendMsg('them', msg));
+        // VOICE RECORDING LOGIC
+        micBtn.onclick = async () => {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                return;
+            }
 
-        function appendMsg(side, text) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+
+                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+
+                mediaRecorder.onstop = () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                    const reader = new FileReader();
+                    reader.readAsDataURL(audioBlob);
+                    reader.onloadend = () => {
+                        const base64Audio = reader.result;
+                        socket.emit('send-message', { type: 'voice', data: base64Audio });
+                        appendMsg('me', { type: 'voice', data: base64Audio });
+                    };
+                    micBtn.classList.remove('recording');
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                micBtn.classList.add('recording');
+
+                // AUTO-STOP AFTER 10 SECONDS
+                setTimeout(() => {
+                    if (mediaRecorder.state === "recording") mediaRecorder.stop();
+                }, 10000);
+
+            } catch (err) {
+                alert("Microphone access denied or not available.");
+            }
+        };
+
+        socket.on('receive-message', (content) => appendMsg('them', content));
+
+        function appendMsg(side, content) {
             const box = document.getElementById('chat-box');
-            box.innerHTML += `<div class="${side}" style="display:flex; flex-direction:column;"><div class="bubble">${text}</div></div>`;
+            let innerHTML = '';
+
+            if (content.type === 'voice') {
+                innerHTML = `<audio controls src="${content.data}"></audio>`;
+            } else {
+                innerHTML = content.data;
+            }
+
+            box.innerHTML += `
+                <div class="${side}" style="display:flex; flex-direction:column;">
+                    <div class="bubble">${innerHTML}</div>
+                </div>`;
             box.scrollTop = box.scrollHeight;
         }
     </script>
 </body>
 </html>
-
