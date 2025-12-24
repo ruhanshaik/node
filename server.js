@@ -75,3 +75,9 @@ const PORT = process.env.PORT || 8080;
 server.listen(PORT, '0.0.0.0', () => {
     console.log(`Indian Omegle is LIVE on port ${PORT}`);
 });
+// Ensure your io configuration can handle the audio data size
+const io = new Server(server, { 
+    cors: { origin: "*" },
+    maxHttpBufferSize: 1e7 // Increases limit to 10MB for voice messages
+});
+
