@@ -5,7 +5,12 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+
+// COMBINED FIX: One declaration with 10MB limit for voice messages
+const io = new Server(server, { 
+    cors: { origin: "*" },
+    maxHttpBufferSize: 1e7 // Supports voice data
+});
 
 app.use(express.static(path.join(process.cwd())));
 
@@ -32,7 +37,6 @@ io.on('connection', (socket) => {
             socket.currentRoom = roomId;
             partner.currentRoom = roomId;
 
-            // Link them so we know who to disconnect later
             socket.partnerId = partner.id;
             partner.partnerId = socket.id;
 
@@ -44,9 +48,9 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('send-message', (msg) => {
+    socket.on('send-message', (content) => {
         if (socket.currentRoom) {
-            socket.to(socket.currentRoom).emit('receive-message', msg);
+            socket.to(socket.currentRoom).emit('receive-message', content);
         }
     });
 
@@ -54,11 +58,8 @@ io.on('connection', (socket) => {
         onlineCount = Math.max(0, onlineCount - 1);
         io.emit('user-count', onlineCount);
 
-        // LOGIC: If this user was in a chat, notify the partner to disconnect
         if (socket.currentRoom) {
             io.to(socket.currentRoom).emit('partner-disconnected');
-            
-            // Force the partner to leave the socket room
             const partnerSocket = io.sockets.sockets.get(socket.partnerId);
             if (partnerSocket) {
                 partnerSocket.leave(socket.currentRoom);
@@ -66,18 +67,11 @@ io.on('connection', (socket) => {
                 partnerSocket.partnerId = null;
             }
         }
-
         if (waitingUser && waitingUser.id === socket.id) waitingUser = null;
     });
 });
 
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`Indian Omegle is LIVE on port ${PORT}`);
+    console.log(`OMIGLE is LIVE on port ${PORT}`);
 });
-// Ensure your io configuration can handle the audio data size
-const io = new Server(server, { 
-    cors: { origin: "*" },
-    maxHttpBufferSize: 1e7 // Increases limit to 10MB for voice messages
-});
-
