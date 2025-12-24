@@ -87,6 +87,7 @@
         input {
             width: 100%; background: #F2F2F7; border: 1px solid #E5E5EA;
             padding: 12px; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box;
+            outline: none;
         }
 
         /* --- THE LOGO ROTATION LOADER --- */
@@ -202,7 +203,7 @@
             <div id="input-area">
                 <button id="mic-btn" class="mic-btn">🎙️</button>
                 <input type="text" id="msg-input" placeholder="Say something...">
-                <button onclick="sendMessage()" style="background:none; border:none; color:var(--dark-yellow); font-weight:800; cursor:pointer;">SEND</button>
+                <button onclick="sendTextMessage()" style="background:none; border:none; color:var(--dark-yellow); font-weight:800; cursor:pointer;">SEND</button>
             </div>
         </div>
     </div>
@@ -213,7 +214,7 @@
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
         let matchTimer;
 
-        // Voice Variables
+        // Voice Recording Variables
         let mediaRecorder;
         let audioChunks = [];
         const micBtn = document.getElementById('mic-btn');
@@ -254,20 +255,22 @@
             document.getElementById('p-name').innerText = partner.name;
             document.getElementById('p-icon').innerText = partner.icon;
             document.getElementById('p-meta').innerText = `${partner.age} • ${partner.origin}`;
+            window.partnerIcon = partner.icon;
         });
 
         socket.on('partner-disconnected', () => {
-            alert("Partner has left.");
+            alert("Partner has left the chat.");
             location.reload(); 
         });
 
-        // SEND TEXT MESSAGE
-        function sendMessage() {
+        // TEXT MESSAGE LOGIC
+        function sendTextMessage() {
             const input = document.getElementById('msg-input');
             const val = input.value.trim();
             if (val) {
-                socket.emit('send-message', { type: 'text', data: val });
-                appendMsg('me', { type: 'text', data: val });
+                const messageObj = { type: 'text', data: val };
+                socket.emit('send-message', messageObj);
+                appendMsg('me', messageObj);
                 input.value = '';
             }
         }
@@ -292,8 +295,9 @@
                     reader.readAsDataURL(audioBlob);
                     reader.onloadend = () => {
                         const base64Audio = reader.result;
-                        socket.emit('send-message', { type: 'voice', data: base64Audio });
-                        appendMsg('me', { type: 'voice', data: base64Audio });
+                        const messageObj = { type: 'voice', data: base64Audio };
+                        socket.emit('send-message', messageObj);
+                        appendMsg('me', messageObj);
                     };
                     micBtn.classList.remove('recording');
                     stream.getTracks().forEach(track => track.stop());
@@ -302,13 +306,13 @@
                 mediaRecorder.start();
                 micBtn.classList.add('recording');
 
-                // AUTO-STOP AFTER 10 SECONDS
+                // FORCE STOP AT 10 SECONDS
                 setTimeout(() => {
                     if (mediaRecorder.state === "recording") mediaRecorder.stop();
                 }, 10000);
 
             } catch (err) {
-                alert("Microphone access denied or not available.");
+                alert("Microphone permission denied.");
             }
         };
 
@@ -316,17 +320,17 @@
 
         function appendMsg(side, content) {
             const box = document.getElementById('chat-box');
-            let innerHTML = '';
+            let messageContent = '';
 
             if (content.type === 'voice') {
-                innerHTML = `<audio controls src="${content.data}"></audio>`;
+                messageContent = `<audio controls src="${content.data}"></audio>`;
             } else {
-                innerHTML = content.data;
+                messageContent = content.data;
             }
 
             box.innerHTML += `
                 <div class="${side}" style="display:flex; flex-direction:column;">
-                    <div class="bubble">${innerHTML}</div>
+                    <div class="bubble">${messageContent}</div>
                 </div>`;
             box.scrollTop = box.scrollHeight;
         }
