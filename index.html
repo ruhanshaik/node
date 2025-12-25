@@ -9,89 +9,71 @@
         :root {
             --dark-yellow: #CC9900;
             --wa-green: #075E54;
-            --wa-light-green: #DCF8C6;
             --wa-bg: #E5DDD5;
             --ios-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
             font-family: var(--ios-font);
-            background-image: linear-gradient(rgba(240, 240, 242, 0.6), rgba(240, 240, 242, 0.6)), url('background.png');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('background.png');
             background-size: cover; background-position: center; background-attachment: fixed;
             margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
         }
 
         .container {
-            width: 95%; max-width: 450px; height: 90vh;
-            background: #FFFFFF; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            width: 95%; max-width: 400px; height: 85vh;
+            background: #FFFFFF; border-radius: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
             display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
 
-        /* Branding Styles */
-        .brand-header { padding: 15px; text-align: center; background: #fff; }
-        .brand-name { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+        /* Screen Styles */
+        .screen { display: none; padding: 30px; flex-direction: column; align-items: center; height: 100%; box-sizing: border-box; }
+        .active { display: flex; }
+
+        .brand-name { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
         .brand-omi { color: #000; }
         .brand-gle { color: var(--dark-yellow); }
 
-        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; height: 100%; box-sizing: border-box; }
-        .active { display: flex; }
-
-        /* Desktop Optimization for Gender Icons */
-        .gender-box { display: flex; gap: 20px; width: 100%; justify-content: center; margin: 20px 0; }
-        .gender-btn {
-            width: 100px; padding: 20px; border-radius: 16px; background: #F4F4F7;
-            cursor: pointer; border: 2px solid transparent; transition: 0.2s;
-            display: flex; flex-direction: column; align-items: center;
+        /* Professional Identity Form */
+        .form-container { width: 100%; display: flex; flex-direction: column; gap: 15px; margin-top: 10px; }
+        .form-input {
+            width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #E5E5EA;
+            background: #F9F9F9; font-size: 16px; outline: none; box-sizing: border-box;
+            transition: border 0.3s;
         }
-        .gender-btn:hover { background: #eee; }
-        .gender-btn.selected { border-color: var(--dark-yellow); background: #FFFCE6; }
-        .gender-btn span { font-size: 45px; margin-bottom: 10px; }
+        .form-input:focus { border-color: var(--dark-yellow); background: #fff; }
 
-        .ios-btn {
-            width: 80%; background: #000; color: #FFF; border: none; 
-            padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer;
+        .action-btn {
+            width: 100%; background: #000; color: #fff; padding: 16px;
+            border-radius: 14px; font-weight: 700; font-size: 17px; cursor: pointer;
+            border: none; margin-top: 10px; transition: 0.2s;
         }
+        .action-btn:active { transform: scale(0.98); }
 
-        /* WhatsApp Chat Interface */
+        /* WhatsApp Chat Area */
         #screen-chat { padding: 0; background-color: var(--wa-bg); }
-        #chat-header { 
-            background: var(--wa-green); color: white; padding: 10px 15px; 
-            display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; 
-        }
-        #chat-box { 
-            flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; 
-            display: flex; flex-direction: column; gap: 8px;
-        }
+        #chat-header { background: var(--wa-green); color: white; padding: 12px 15px; display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; width: 100%; box-sizing: border-box; }
         
-        .bubble { padding: 8px 12px; border-radius: 12px; font-size: 15px; max-width: 80%; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .me .bubble { background: var(--wa-light-green); align-self: flex-end; border-top-right-radius: 2px; }
+        .bubble { padding: 10px 14px; border-radius: 12px; font-size: 15px; max-width: 80%; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .me .bubble { background: #DCF8C6; align-self: flex-end; border-top-right-radius: 2px; }
         .them .bubble { background: #FFFFFF; align-self: flex-start; border-top-left-radius: 2px; }
 
-        /* WhatsApp Input Bar */
-        .wa-input-area {
-            background: #F0F0F0; padding: 8px 12px; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;
-        }
-        .input-pill {
-            background: #FFF; border-radius: 25px; flex: 1; display: flex; align-items: center; padding: 5px 15px; gap: 10px;
-        }
-        .input-pill input { border: none; outline: none; flex: 1; font-size: 16px; padding: 8px 0; }
+        /* Input Bar */
+        .wa-input-wrapper { background: #F0F0F0; padding: 10px; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; }
+        .input-pill { background: #fff; border-radius: 25px; flex: 1; display: flex; align-items: center; padding: 5px 15px; gap: 10px; }
+        .input-pill input { border: none; outline: none; flex: 1; padding: 8px 0; font-size: 16px; }
         
-        .wa-icon { color: #888; font-size: 20px; cursor: pointer; }
-        .wa-icon:hover { color: #555; }
-        
-        #send-btn { color: var(--wa-green); display: none; font-size: 22px; }
+        .wa-icon { color: #888; font-size: 22px; cursor: pointer; }
+        #send-btn { color: var(--wa-green); display: none; }
         #mic-btn.recording { color: #FF3B30; transform: scale(1.3); }
 
         /* Emoji Drawer */
-        #emoji-drawer {
-            display: none; grid-template-columns: repeat(8, 1fr); gap: 10px;
-            background: #FFF; padding: 15px; border-top: 1px solid #ddd;
-            height: 180px; overflow-y: auto; width: 100%; box-sizing: border-box;
-        }
+        #emoji-drawer { display: none; grid-template-columns: repeat(8, 1fr); gap: 10px; background: #fff; padding: 15px; height: 180px; overflow-y: auto; border-top: 1px solid #ddd; width: 100%; box-sizing: border-box; }
         .emoji-item { font-size: 24px; cursor: pointer; text-align: center; }
 
         /* Rotating Loader */
-        .rotating-logo-img { width: 100px; height: 100px; animation: spinPause 5s infinite; margin-top: 40px; }
+        .rotating-logo-img { width: 100px; animation: spinPause 5s infinite; margin-top: 40px; }
         @keyframes spinPause { 0% {transform: rotate(0deg);} 60% {transform: rotate(1080deg);} 100% {transform: rotate(1080deg);} }
     </style>
 </head>
@@ -100,51 +82,54 @@
     <div class="container">
         <div id="screen-gender" class="screen active">
             <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
-            <p>Select your gender to begin</p>
-            <div class="gender-box">
-                <div class="gender-btn" onclick="selectGender('male', '👨')"><span>👨</span><small>Male</small></div>
-                <div class="gender-btn" onclick="selectGender('female', '👩')"><span>👩</span><small>Female</small></div>
+            <p style="color: #666;">Choose your gender</p>
+            <div style="display: flex; gap: 20px; margin: 20px 0;">
+                <div onclick="selectGender('male', '👨')" style="cursor:pointer; text-align:center;">
+                    <div id="m-btn" style="width:80px; height:80px; background:#f4f4f7; border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:40px; border:2px solid transparent;">👨</div>
+                    <small>Male</small>
+                </div>
+                <div onclick="selectGender('female', '👩')" style="cursor:pointer; text-align:center;">
+                    <div id="f-btn" style="width:80px; height:80px; background:#f4f4f7; border-radius:20px; display:flex; align-items:center; justify-content:center; font-size:40px; border:2px solid transparent;">👩</div>
+                    <small>Female</small>
+                </div>
             </div>
-            <button class="ios-btn" onclick="showScreen('screen-form')">Continue</button>
+            <button class="action-btn" onclick="goToForm()">Next</button>
         </div>
 
         <div id="screen-form" class="screen">
             <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
-            <div style="width: 100%; margin-top: 20px;">
-                <input type="text" id="name" placeholder="Name">
-                <input type="number" id="age" placeholder="Age">
-                <input type="text" id="origin" placeholder="City">
+            <p style="color: #666;">Complete your profile</p>
+            <div class="form-container">
+                <input type="text" id="name" class="form-input" placeholder="What is your name?">
+                <input type="number" id="age" class="form-input" placeholder="How old are you?">
+                <input type="text" id="origin" class="form-input" placeholder="Which city are you from?">
             </div>
-            <button class="ios-btn" onclick="startMatching()">Connect Now</button>
+            <button class="action-btn" onclick="startMatching()">Connect Now</button>
         </div>
 
         <div id="screen-loading" class="screen">
-            <img src="Omigle.png" class="rotating-logo-img" alt="Logo">
-            <h3 style="margin-top: 30px;">Syncing...</h3>
-            <p style="color: #666; font-size: 14px;">Looking for a partner on the global server</p>
+            <img src="Omigle.png" class="rotating-logo-img">
+            <h3 style="margin-top: 20px;">Finding Partner...</h3>
         </div>
 
         <div id="screen-chat" class="screen">
             <div id="chat-header">
-                <span id="p-icon" style="font-size: 28px;">👤</span>
+                <span id="p-icon" style="font-size: 24px;">👤</span>
                 <div style="text-align: left;">
-                    <b id="p-name" style="font-size: 16px;">Stranger</b><br>
-                    <small id="p-meta" style="opacity: 0.9; font-size: 11px;"></small>
+                    <b id="p-name">Stranger</b><br>
+                    <small id="p-meta" style="opacity: 0.8; font-size: 11px;"></small>
                 </div>
             </div>
-            
             <div id="chat-box"></div>
-
             <div id="emoji-drawer"></div>
-
-            <div class="wa-input-area">
+            <div class="wa-input-wrapper">
                 <div class="input-pill">
-                    <i class="fa-regular fa-face-smile wa-icon" onclick="toggleEmojiDrawer()"></i>
-                    <input type="text" id="msg-input" placeholder="Message" oninput="toggleInputButtons()">
+                    <i class="fa-regular fa-face-smile wa-icon" onclick="toggleEmojis()"></i>
+                    <input type="text" id="msg-input" placeholder="Type a message" oninput="toggleInput()">
                     <i class="fa-solid fa-plus wa-icon"></i>
                 </div>
-                <i id="mic-btn" class="fa-solid fa-microphone wa-icon" style="font-size: 22px;"></i>
-                <i id="send-btn" class="fa-solid fa-paper-plane wa-icon" onclick="sendTextMessage()"></i>
+                <i id="mic-btn" class="fa-solid fa-microphone wa-icon" style="color: var(--wa-green);"></i>
+                <i id="send-btn" class="fa-solid fa-paper-plane wa-icon" onclick="sendText()"></i>
             </div>
         </div>
     </div>
@@ -155,19 +140,24 @@
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
         let mediaRecorder, audioChunks = [];
 
-        // Emojis List
-        const emojis = ["😂","❤️","🤣","👍","😭","🙏","😘","🥰","😍","😊","🎉","🔥","🤔","✨","🥺","😅","😎","🙌","😉","🙄","🤷","😋","🤩","🥳","🎈","💎","📍","🇮🇳","🍺","🥤","🍕","🍔","🚀","🌈","☀️","🌚","💃","🕺","💻","📱","📸","💬","✔️","💯","✅","🧿","🔥","✨"];
+        // Emojis
+        const emojis = ["😂","❤️","🤣","👍","😭","🙏","😘","🥰","😍","😊","🎉","🔥","🤔","✨","🥺","😅","😎","🙌","😉","🙄","🤷","😋","🤩","🥳","🎈","💎","📍","🇮🇳","🍕","🍔","🚀","🌈","☀️","💃","💬","💯","✅","🧿"];
         const drawer = document.getElementById('emoji-drawer');
         emojis.forEach(e => {
-            let el = document.createElement('span'); el.className = 'emoji-item'; el.innerText = e;
-            el.onclick = () => { document.getElementById('msg-input').value += e; toggleInputButtons(); };
-            drawer.appendChild(el);
+            let s = document.createElement('span'); s.className = 'emoji-item'; s.innerText = e;
+            s.onclick = () => { document.getElementById('msg-input').value += e; toggleInput(); };
+            drawer.appendChild(s);
         });
 
         function selectGender(g, icon) {
             myData.gender = g; myData.icon = icon;
-            document.querySelectorAll('.gender-btn').forEach(b => b.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+            document.getElementById('m-btn').style.borderColor = g === 'male' ? 'var(--dark-yellow)' : 'transparent';
+            document.getElementById('f-btn').style.borderColor = g === 'female' ? 'var(--dark-yellow)' : 'transparent';
+        }
+
+        function goToForm() {
+            if (!myData.gender) return alert("Please select a gender!");
+            showScreen('screen-form');
         }
 
         function showScreen(id) {
@@ -175,18 +165,24 @@
             document.getElementById(id).classList.add('active');
         }
 
-        function toggleEmojiDrawer() { drawer.style.display = drawer.style.display === 'grid' ? 'none' : 'grid'; }
-
-        function toggleInputButtons() {
+        function toggleInput() {
             const hasText = document.getElementById('msg-input').value.trim().length > 0;
             document.getElementById('send-btn').style.display = hasText ? 'block' : 'none';
             document.getElementById('mic-btn').style.display = hasText ? 'none' : 'block';
         }
 
+        function toggleEmojis() { drawer.style.display = drawer.style.display === 'grid' ? 'none' : 'grid'; }
+
         function startMatching() {
-            myData.name = document.getElementById('name').value;
-            myData.age = document.getElementById('age').value;
-            myData.origin = document.getElementById('origin').value;
+            myData.name = document.getElementById('name').value.trim();
+            myData.age = document.getElementById('age').value.trim();
+            myData.origin = document.getElementById('origin').value.trim();
+
+            // Form Validation
+            if (!myData.name || !myData.age || !myData.origin) {
+                return alert("Please fill in ALL details before connecting!");
+            }
+
             showScreen('screen-loading');
             socket.emit('find-match', myData);
         }
@@ -198,42 +194,34 @@
             document.getElementById('p-meta').innerText = `${partner.age} • ${partner.origin}`;
         });
 
-        function sendTextMessage() {
+        function sendText() {
             const input = document.getElementById('msg-input');
             socket.emit('send-message', { type: 'text', data: input.value });
             appendMsg('me', { type: 'text', data: input.value });
-            input.value = ''; toggleInputButtons();
+            input.value = ''; toggleInput();
         }
 
-        // --- WhatsApp Voice: Hold to Record ---
+        // WhatsApp Press-and-Hold Mic
         const micBtn = document.getElementById('mic-btn');
         const startVoice = async () => {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const reader = new FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onloadend = () => {
-                        socket.emit('send-message', { type: 'voice', data: reader.result });
-                        appendMsg('me', { type: 'voice', data: reader.result });
-                    };
-                    stream.getTracks().forEach(t => t.stop());
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const reader = new FileReader();
+                reader.readAsDataURL(new Blob(audioChunks, { type: 'audio/mp3' }));
+                reader.onloadend = () => {
+                    socket.emit('send-message', { type: 'voice', data: reader.result });
+                    appendMsg('me', { type: 'voice', data: reader.result });
                 };
-                mediaRecorder.start();
-                micBtn.classList.add('recording');
-            } catch (e) { alert("Mic Access Denied"); }
+                stream.getTracks().forEach(t => t.stop());
+            };
+            mediaRecorder.start();
+            micBtn.classList.add('recording');
         };
 
-        const stopVoice = () => {
-            if (mediaRecorder && mediaRecorder.state === "recording") {
-                mediaRecorder.stop();
-                micBtn.classList.remove('recording');
-            }
-        };
+        const stopVoice = () => { if (mediaRecorder?.state === "recording") { mediaRecorder.stop(); micBtn.classList.remove('recording'); } };
 
         micBtn.onmousedown = startVoice; micBtn.onmouseup = stopVoice;
         micBtn.ontouchstart = (e) => { e.preventDefault(); startVoice(); };
@@ -244,11 +232,9 @@
         function appendMsg(side, content) {
             const box = document.getElementById('chat-box');
             const html = content.type === 'voice' ? `<audio controls src="${content.data}"></audio>` : content.data;
-            box.innerHTML += `<div class="${side}" style="display:flex; flex-direction:column;"><div class="bubble">${html}</div></div>`;
+            box.innerHTML += `<div class="${side}"><div class="bubble">${html}</div></div>`;
             box.scrollTop = box.scrollHeight;
         }
-
-        socket.on('partner-disconnected', () => { alert("Partner disconnected"); location.reload(); });
     </script>
 </body>
 </html>
