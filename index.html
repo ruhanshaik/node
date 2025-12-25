@@ -4,219 +4,147 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OMIGLE | Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --dark-yellow: #CC9900;
-            --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
-            --ai-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            --wa-green: #075E54;
+            --wa-light-green: #DCF8C6;
+            --wa-bg: #E5DDD5;
+            --ios-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
             font-family: var(--ios-font);
-            background-color: #F0F0F2;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            background-image: linear-gradient(rgba(240, 240, 242, 0.6), rgba(240, 240, 242, 0.6)), url('background.png');
+            background-size: cover; background-position: center; background-attachment: fixed;
+            margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
         }
 
         .container {
-            width: 90%;
-            max-width: 360px;
-            background: #FFFFFF;
-            border-radius: 24px;
-            box-shadow: var(--ai-shadow);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            text-align: center;
-            position: relative;
+            width: 95%; max-width: 450px; height: 90vh;
+            background: #FFFFFF; border-radius: 20px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            display: flex; flex-direction: column; overflow: hidden; position: relative;
         }
 
         /* Branding Styles */
-        .header-logo {
-            width: 80px;
-            height: 80px;
-            margin: 20px auto 10px;
-            object-fit: contain;
-        }
-        body {
-    font-family: var(--ios-font);
-    /* Link to your background image */
-    background-image: linear-gradient(rgba(240, 240, 242, 0.7), rgba(240, 240, 242, 0.7)), url('background.png');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    background-repeat: no-repeat;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-        .brand-name {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
-        .brand-omi { color: #000000; }
+        .brand-header { padding: 15px; text-align: center; background: #fff; }
+        .brand-name { font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+        .brand-omi { color: #000; }
         .brand-gle { color: var(--dark-yellow); }
 
-        .live-indicator {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.05);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--dark-yellow);
-        }
-
-        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; }
+        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; height: 100%; box-sizing: border-box; }
         .active { display: flex; }
 
-        /* Gender Selection */
-        .gender-box { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
+        /* Desktop Optimization for Gender Icons */
+        .gender-box { display: flex; gap: 20px; width: 100%; justify-content: center; margin: 20px 0; }
         .gender-btn {
-            flex: 1; padding: 15px; border-radius: 16px; background: #F4F4F7;
+            width: 100px; padding: 20px; border-radius: 16px; background: #F4F4F7;
             cursor: pointer; border: 2px solid transparent; transition: 0.2s;
+            display: flex; flex-direction: column; align-items: center;
         }
-        .gender-btn.selected { border-color: var(--dark-yellow); background: #FFF; }
-        .gender-btn span { font-size: 30px; }
+        .gender-btn:hover { background: #eee; }
+        .gender-btn.selected { border-color: var(--dark-yellow); background: #FFFCE6; }
+        .gender-btn span { font-size: 45px; margin-bottom: 10px; }
 
         .ios-btn {
-            width: 100%; background: #000; color: #FFF;
-            border: none; padding: 14px; border-radius: 14px;
-            font-weight: 700; font-size: 16px; cursor: pointer;
+            width: 80%; background: #000; color: #FFF; border: none; 
+            padding: 14px; border-radius: 14px; font-weight: 700; cursor: pointer;
         }
 
-        input {
-            width: 100%; background: #F2F2F7; border: 1px solid #E5E5EA;
-            padding: 12px; border-radius: 12px; margin-bottom: 10px; box-sizing: border-box;
-            outline: none;
-        }
-
-        /* --- THE LOGO ROTATION LOADER --- */
-        .logo-loader-container {
-            margin: 40px auto;
-            width: 120px;
-            height: 120px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .rotating-logo-img {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            animation: spinRightPause 5s infinite ease-in-out;
-        }
-
-        @keyframes spinRightPause {
-            0% { transform: rotate(0deg); }
-            60% { transform: rotate(1080deg); } 
-            100% { transform: rotate(1080deg); } 
-        }
-
-        #timeout-msg { color: #FF3B30; display: none; font-size: 12px; font-weight: 600; margin-top: 10px; }
-
-        /* Chat UI */
+        /* WhatsApp Chat Interface */
+        #screen-chat { padding: 0; background-color: var(--wa-bg); }
         #chat-header { 
-            padding: 15px; border-bottom: 1px solid #EEE; 
-            display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;
+            background: var(--wa-green); color: white; padding: 10px 15px; 
+            display: flex; align-items: center; gap: 12px; width: 100%; box-sizing: border-box; 
         }
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; height: 350px; display: flex; flex-direction: column; gap: 10px; }
-        .bubble { padding: 10px 14px; border-radius: 18px; font-size: 15px; max-width: 85%; word-wrap: break-word; }
-        .me .bubble { background: #000; color: #FFF; align-self: flex-end; }
-        .them .bubble { background: #F2F2F7; color: #000; align-self: flex-start; border: 1px solid var(--dark-yellow); }
-
-        /* Voice/Input Area */
-        #input-area { padding: 12px; display: flex; gap: 10px; width: 100%; box-sizing: border-box; border-top: 1px solid #EEE; align-items: center; }
-        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #E5E5EA; padding: 10px 15px; margin-bottom: 0; outline: none; }
+        #chat-box { 
+            flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; 
+            display: flex; flex-direction: column; gap: 8px;
+        }
         
-        .mic-btn {
-            background: none;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            padding: 0 5px;
-            transition: transform 0.2s;
+        .bubble { padding: 8px 12px; border-radius: 12px; font-size: 15px; max-width: 80%; position: relative; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .me .bubble { background: var(--wa-light-green); align-self: flex-end; border-top-right-radius: 2px; }
+        .them .bubble { background: #FFFFFF; align-self: flex-start; border-top-left-radius: 2px; }
+
+        /* WhatsApp Input Bar */
+        .wa-input-area {
+            background: #F0F0F0; padding: 8px 12px; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;
         }
-        .mic-btn.recording {
-            color: #FF3B30;
-            animation: pulse 1s infinite;
+        .input-pill {
+            background: #FFF; border-radius: 25px; flex: 1; display: flex; align-items: center; padding: 5px 15px; gap: 10px;
         }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
+        .input-pill input { border: none; outline: none; flex: 1; font-size: 16px; padding: 8px 0; }
+        
+        .wa-icon { color: #888; font-size: 20px; cursor: pointer; }
+        .wa-icon:hover { color: #555; }
+        
+        #send-btn { color: var(--wa-green); display: none; font-size: 22px; }
+        #mic-btn.recording { color: #FF3B30; transform: scale(1.3); }
+
+        /* Emoji Drawer */
+        #emoji-drawer {
+            display: none; grid-template-columns: repeat(8, 1fr); gap: 10px;
+            background: #FFF; padding: 15px; border-top: 1px solid #ddd;
+            height: 180px; overflow-y: auto; width: 100%; box-sizing: border-box;
         }
-        audio {
-            max-width: 100%;
-            height: 35px;
-            margin-top: 5px;
-        }
+        .emoji-item { font-size: 24px; cursor: pointer; text-align: center; }
+
+        /* Rotating Loader */
+        .rotating-logo-img { width: 100px; height: 100px; animation: spinPause 5s infinite; margin-top: 40px; }
+        @keyframes spinPause { 0% {transform: rotate(0deg);} 60% {transform: rotate(1080deg);} 100% {transform: rotate(1080deg);} }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="live-indicator">
-            <div style="width:6px; height:6px; background:var(--dark-yellow); border-radius:50%;"></div>
-            <span id="user-count">0</span> LIVE
-        </div>
-
-        <img src="Omigle.png" alt="Logo" class="header-logo">
-        <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
-
         <div id="screen-gender" class="screen active">
+            <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
+            <p>Select your gender to begin</p>
             <div class="gender-box">
-                <div class="gender-btn" onclick="selectGender('male', '👨')">
-                    <span>👨</span><br><small>Male</small>
-                </div>
-                <div class="gender-btn" onclick="selectGender('female', '👩')">
-                    <span>👩</span><br><small>Female</small>
-                </div>
+                <div class="gender-btn" onclick="selectGender('male', '👨')"><span>👨</span><small>Male</small></div>
+                <div class="gender-btn" onclick="selectGender('female', '👩')"><span>👩</span><small>Female</small></div>
             </div>
-            <button class="ios-btn" onclick="showScreen('screen-form')">Next</button>
+            <button class="ios-btn" onclick="showScreen('screen-form')">Continue</button>
         </div>
 
         <div id="screen-form" class="screen">
-            <input type="text" id="name" placeholder="Your Name">
-            <input type="number" id="age" placeholder="Your Age">
-            <input type="text" id="origin" placeholder="Your City">
+            <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
+            <div style="width: 100%; margin-top: 20px;">
+                <input type="text" id="name" placeholder="Name">
+                <input type="number" id="age" placeholder="Age">
+                <input type="text" id="origin" placeholder="City">
+            </div>
             <button class="ios-btn" onclick="startMatching()">Connect Now</button>
         </div>
 
         <div id="screen-loading" class="screen">
-            <div class="logo-loader-container">
-                <img src="Omigle.png" class="rotating-logo-img" alt="Searching...">
-            </div>
-            <p style="font-size: 14px; font-weight: 600; color: #444;">Connecting to partner...</p>
-            <p id="timeout-msg">No one is currently available. Please wait.</p>
+            <img src="Omigle.png" class="rotating-logo-img" alt="Logo">
+            <h3 style="margin-top: 30px;">Syncing...</h3>
+            <p style="color: #666; font-size: 14px;">Looking for a partner on the global server</p>
         </div>
 
-        <div id="screen-chat" class="screen" style="padding:0;">
+        <div id="screen-chat" class="screen">
             <div id="chat-header">
-                <span id="p-icon" style="font-size: 24px;">👤</span>
+                <span id="p-icon" style="font-size: 28px;">👤</span>
                 <div style="text-align: left;">
-                    <b id="p-name" style="font-size: 14px;">Stranger</b><br>
-                    <small id="p-meta" style="color: var(--dark-yellow); font-size: 10px;"></small>
+                    <b id="p-name" style="font-size: 16px;">Stranger</b><br>
+                    <small id="p-meta" style="opacity: 0.9; font-size: 11px;"></small>
                 </div>
             </div>
+            
             <div id="chat-box"></div>
-            <div id="input-area">
-                <button id="mic-btn" class="mic-btn">🎙️</button>
-                <input type="text" id="msg-input" placeholder="Say something...">
-                <button onclick="sendTextMessage()" style="background:none; border:none; color:var(--dark-yellow); font-weight:800; cursor:pointer;">SEND</button>
+
+            <div id="emoji-drawer"></div>
+
+            <div class="wa-input-area">
+                <div class="input-pill">
+                    <i class="fa-regular fa-face-smile wa-icon" onclick="toggleEmojiDrawer()"></i>
+                    <input type="text" id="msg-input" placeholder="Message" oninput="toggleInputButtons()">
+                    <i class="fa-solid fa-plus wa-icon"></i>
+                </div>
+                <i id="mic-btn" class="fa-solid fa-microphone wa-icon" style="font-size: 22px;"></i>
+                <i id="send-btn" class="fa-solid fa-paper-plane wa-icon" onclick="sendTextMessage()"></i>
             </div>
         </div>
     </div>
@@ -225,15 +153,15 @@
     <script>
         const socket = io();
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
-        let matchTimer;
+        let mediaRecorder, audioChunks = [];
 
-        // Voice Recording Variables
-        let mediaRecorder;
-        let audioChunks = [];
-        const micBtn = document.getElementById('mic-btn');
-
-        socket.on('user-count', (count) => { 
-            document.getElementById('user-count').innerText = count; 
+        // Emojis List
+        const emojis = ["😂","❤️","🤣","👍","😭","🙏","😘","🥰","😍","😊","🎉","🔥","🤔","✨","🥺","😅","😎","🙌","😉","🙄","🤷","😋","🤩","🥳","🎈","💎","📍","🇮🇳","🍺","🥤","🍕","🍔","🚀","🌈","☀️","🌚","💃","🕺","💻","📱","📸","💬","✔️","💯","✅","🧿","🔥","✨"];
+        const drawer = document.getElementById('emoji-drawer');
+        emojis.forEach(e => {
+            let el = document.createElement('span'); el.className = 'emoji-item'; el.innerText = e;
+            el.onclick = () => { document.getElementById('msg-input').value += e; toggleInputButtons(); };
+            drawer.appendChild(el);
         });
 
         function selectGender(g, icon) {
@@ -243,111 +171,84 @@
         }
 
         function showScreen(id) {
-            if (id === 'screen-form' && !myData.gender) return alert("Select gender first.");
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+        }
+
+        function toggleEmojiDrawer() { drawer.style.display = drawer.style.display === 'grid' ? 'none' : 'grid'; }
+
+        function toggleInputButtons() {
+            const hasText = document.getElementById('msg-input').value.trim().length > 0;
+            document.getElementById('send-btn').style.display = hasText ? 'block' : 'none';
+            document.getElementById('mic-btn').style.display = hasText ? 'none' : 'block';
         }
 
         function startMatching() {
             myData.name = document.getElementById('name').value;
             myData.age = document.getElementById('age').value;
             myData.origin = document.getElementById('origin').value;
-            if (!myData.name || !myData.age) return alert("Fill in your details.");
-
             showScreen('screen-loading');
             socket.emit('find-match', myData);
-
-            matchTimer = setTimeout(() => { 
-                document.getElementById('timeout-msg').style.display = 'block'; 
-            }, 15000);
         }
 
         socket.on('match-found', (partner) => {
-            clearTimeout(matchTimer);
             showScreen('screen-chat');
             document.getElementById('p-name').innerText = partner.name;
             document.getElementById('p-icon').innerText = partner.icon;
             document.getElementById('p-meta').innerText = `${partner.age} • ${partner.origin}`;
-            window.partnerIcon = partner.icon;
         });
 
-        socket.on('partner-disconnected', () => {
-            alert("Partner has left the chat.");
-            location.reload(); 
-        });
-
-        // TEXT MESSAGE LOGIC
         function sendTextMessage() {
             const input = document.getElementById('msg-input');
-            const val = input.value.trim();
-            if (val) {
-                const messageObj = { type: 'text', data: val };
-                socket.emit('send-message', messageObj);
-                appendMsg('me', messageObj);
-                input.value = '';
-            }
+            socket.emit('send-message', { type: 'text', data: input.value });
+            appendMsg('me', { type: 'text', data: input.value });
+            input.value = ''; toggleInputButtons();
         }
 
-        // VOICE RECORDING LOGIC
-        micBtn.onclick = async () => {
-            if (mediaRecorder && mediaRecorder.state === "recording") {
-                mediaRecorder.stop();
-                return;
-            }
-
+        // --- WhatsApp Voice: Hold to Record ---
+        const micBtn = document.getElementById('mic-btn');
+        const startVoice = async () => {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 mediaRecorder = new MediaRecorder(stream);
                 audioChunks = [];
-
-                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
                 mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
+                    const blob = new Blob(audioChunks, { type: 'audio/mp3' });
                     const reader = new FileReader();
-                    reader.readAsDataURL(audioBlob);
+                    reader.readAsDataURL(blob);
                     reader.onloadend = () => {
-                        const base64Audio = reader.result;
-                        const messageObj = { type: 'voice', data: base64Audio };
-                        socket.emit('send-message', messageObj);
-                        appendMsg('me', messageObj);
+                        socket.emit('send-message', { type: 'voice', data: reader.result });
+                        appendMsg('me', { type: 'voice', data: reader.result });
                     };
-                    micBtn.classList.remove('recording');
-                    stream.getTracks().forEach(track => track.stop());
+                    stream.getTracks().forEach(t => t.stop());
                 };
-
                 mediaRecorder.start();
                 micBtn.classList.add('recording');
+            } catch (e) { alert("Mic Access Denied"); }
+        };
 
-                // FORCE STOP AT 10 SECONDS
-                setTimeout(() => {
-                    if (mediaRecorder.state === "recording") mediaRecorder.stop();
-                }, 10000);
-
-            } catch (err) {
-                alert("Microphone permission denied.");
+        const stopVoice = () => {
+            if (mediaRecorder && mediaRecorder.state === "recording") {
+                mediaRecorder.stop();
+                micBtn.classList.remove('recording');
             }
         };
 
-        socket.on('receive-message', (content) => appendMsg('them', content));
+        micBtn.onmousedown = startVoice; micBtn.onmouseup = stopVoice;
+        micBtn.ontouchstart = (e) => { e.preventDefault(); startVoice(); };
+        micBtn.ontouchend = (e) => { e.preventDefault(); stopVoice(); };
+
+        socket.on('receive-message', msg => appendMsg('them', msg));
 
         function appendMsg(side, content) {
             const box = document.getElementById('chat-box');
-            let messageContent = '';
-
-            if (content.type === 'voice') {
-                messageContent = `<audio controls src="${content.data}"></audio>`;
-            } else {
-                messageContent = content.data;
-            }
-
-            box.innerHTML += `
-                <div class="${side}" style="display:flex; flex-direction:column;">
-                    <div class="bubble">${messageContent}</div>
-                </div>`;
+            const html = content.type === 'voice' ? `<audio controls src="${content.data}"></audio>` : content.data;
+            box.innerHTML += `<div class="${side}" style="display:flex; flex-direction:column;"><div class="bubble">${html}</div></div>`;
             box.scrollTop = box.scrollHeight;
         }
+
+        socket.on('partner-disconnected', () => { alert("Partner disconnected"); location.reload(); });
     </script>
 </body>
 </html>
-
