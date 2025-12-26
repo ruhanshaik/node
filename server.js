@@ -8,12 +8,12 @@ const server = http.createServer(app);
 
 const io = new Server(server, { 
     cors: { origin: "*" },
-    maxHttpBufferSize: 1e7 
+    maxHttpBufferSize: 1e7 // Supports high quality voice data
 });
 
 app.use(express.static(path.join(process.cwd())));
 
-let waitingUser = null; // The person currently looking for a match
+let waitingUser = null;
 let onlineCount = 0; 
 
 app.get('*', (req, res) => {
@@ -26,8 +26,7 @@ io.on('connection', (socket) => {
 
     socket.on('find-match', (userData) => {
         socket.userData = userData;
-
-        // Validation: If there's a waiting user and they are still connected
+        // Logic to prevent ghost waiting users
         if (waitingUser && waitingUser.id !== socket.id && waitingUser.connected) {
             const partner = waitingUser;
             const roomId = `room-${socket.id}-${partner.id}`;
@@ -40,16 +39,11 @@ io.on('connection', (socket) => {
             socket.partnerId = partner.id;
             partner.partnerId = socket.id;
 
-            // Notify both users
             socket.emit('match-found', partner.userData);
             partner.emit('match-found', socket.userData);
-            
-            waitingUser = null; // Clear the queue for the next pair
-            console.log(`Match created: ${socket.id} & ${partner.id}`);
+            waitingUser = null;
         } else {
-            // If nobody is waiting, this user becomes the waiting user
             waitingUser = socket;
-            console.log(`User ${socket.id} is now waiting...`);
         }
     });
 
@@ -75,19 +69,14 @@ io.on('connection', (socket) => {
         onlineCount = Math.max(0, onlineCount - 1);
         io.emit('user-count', onlineCount);
 
-        // If the person who disconnected was the one waiting, clear the slot
-        if (waitingUser && waitingUser.id === socket.id) {
-            waitingUser = null;
-        }
+        if (waitingUser && waitingUser.id === socket.id) waitingUser = null;
 
-        // If they were in a chat, notify the partner
         if (socket.currentRoom) {
             io.to(socket.currentRoom).emit('partner-disconnected');
             const partnerSocket = io.sockets.sockets.get(socket.partnerId);
             if (partnerSocket) {
                 partnerSocket.leave(socket.currentRoom);
                 partnerSocket.currentRoom = null;
-                partnerSocket.partnerId = null;
             }
         }
     });
