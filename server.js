@@ -6,10 +6,9 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 
-// COMBINED FIX: One declaration with 10MB limit for voice messages
 const io = new Server(server, { 
     cors: { origin: "*" },
-    maxHttpBufferSize: 1e7 // Supports voice data
+    maxHttpBufferSize: 1e7 
 });
 
 app.use(express.static(path.join(process.cwd())));
@@ -30,21 +29,29 @@ io.on('connection', (socket) => {
         if (waitingUser && waitingUser.id !== socket.id) {
             const partner = waitingUser;
             const roomId = `room-${socket.id}-${partner.id}`;
-            
             socket.join(roomId);
             partner.join(roomId);
-            
             socket.currentRoom = roomId;
             partner.currentRoom = roomId;
-
             socket.partnerId = partner.id;
             partner.partnerId = socket.id;
-
             socket.emit('match-found', partner.userData);
             partner.emit('match-found', socket.userData);
             waitingUser = null;
         } else {
             waitingUser = socket;
+        }
+    });
+
+    socket.on('typing', () => {
+        if (socket.currentRoom) {
+            socket.to(socket.currentRoom).emit('partner-typing');
+        }
+    });
+
+    socket.on('reaction', (data) => {
+        if (socket.currentRoom) {
+            socket.to(socket.currentRoom).emit('receive-reaction', data);
         }
     });
 
@@ -57,14 +64,12 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         onlineCount = Math.max(0, onlineCount - 1);
         io.emit('user-count', onlineCount);
-
         if (socket.currentRoom) {
             io.to(socket.currentRoom).emit('partner-disconnected');
             const partnerSocket = io.sockets.sockets.get(socket.partnerId);
             if (partnerSocket) {
                 partnerSocket.leave(socket.currentRoom);
                 partnerSocket.currentRoom = null;
-                partnerSocket.partnerId = null;
             }
         }
         if (waitingUser && waitingUser.id === socket.id) waitingUser = null;
