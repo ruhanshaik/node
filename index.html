@@ -10,7 +10,18 @@
             --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
             --ai-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             --wa-green: #25D366;
+            --wa-bg: #E5DDD5;
         }
+
+        /* --- SECURITY: DISABLE SELECTION & COPY --- */
+        * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+        input, textarea { -webkit-user-select: text; user-select: text; }
 
         body {
             font-family: var(--ios-font);
@@ -37,42 +48,25 @@
             overflow: hidden;
             text-align: center;
             position: relative;
+            height: 90vh;
         }
 
-        .header-logo {
-            width: 80px;
-            height: 80px;
-            margin: 20px auto 10px;
-            object-fit: contain;
-        }
-
-        .brand-name {
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            letter-spacing: -1px;
-        }
+        /* Branding Styles */
+        .header-logo { width: 80px; height: 80px; margin: 20px auto 10px; object-fit: contain; }
+        .brand-name { font-size: 26px; font-weight: 800; margin-bottom: 20px; letter-spacing: -1px; }
         .brand-omi { color: #000000; }
         .brand-gle { color: var(--dark-yellow); }
 
         .live-indicator {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.05);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            color: var(--dark-yellow);
+            position: absolute; top: 15px; right: 15px; background: rgba(0, 0, 0, 0.05);
+            padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
+            display: flex; align-items: center; gap: 5px; color: var(--dark-yellow);
         }
 
         .screen { display: none; padding: 25px; flex-direction: column; align-items: center; height: 100%; box-sizing: border-box; }
         .active { display: flex; }
 
+        /* Gender Selection */
         .gender-box { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
         .gender-btn {
             flex: 1; padding: 15px; border-radius: 16px; background: #F4F4F7;
@@ -93,58 +87,61 @@
             outline: none;
         }
 
-        /* Loader Animation */
+        /* Logo Loader */
         .logo-loader-container { margin: 40px auto; width: 120px; height: 120px; display: flex; justify-content: center; align-items: center; }
         .rotating-logo-img { width: 100px; height: 100px; object-fit: contain; animation: spinRightPause 5s infinite ease-in-out; }
         @keyframes spinRightPause { 0% { transform: rotate(0deg); } 60% { transform: rotate(1080deg); } 100% { transform: rotate(1080deg); } }
         #timeout-msg { color: #FF3B30; display: none; font-size: 12px; font-weight: 600; margin-top: 10px; }
 
-        /* Chat UI */
-        #chat-header { 
-            padding: 12px 15px; border-bottom: 1px solid #EEE; 
-            display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box;
-        }
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; height: 400px; display: flex; flex-direction: column; gap: 12px; background: #E5DDD5; }
+        /* --- CHAT UI --- */
+        #chat-header { padding: 12px 15px; border-bottom: 1px solid #EEE; display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; width: 100%; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px; background: var(--wa-bg); }
         
-        /* Bubble & Reactions */
-        .msg-wrapper { display: flex; flex-direction: column; position: relative; max-width: 85%; }
+        .msg-row { display: flex; flex-direction: column; position: relative; }
         .me { align-self: flex-end; }
         .them { align-self: flex-start; }
         
-        .bubble { padding: 8px 12px; border-radius: 12px; font-size: 15px; position: relative; box-shadow: 0 1px 1px rgba(0,0,0,0.1); }
-        .me .bubble { background: #DCF8C6; color: #000; border-bottom-right-radius: 2px; }
-        .them .bubble { background: #FFFFFF; color: #000; border-bottom-left-radius: 2px; }
+        .bubble { 
+            padding: 8px 12px; border-radius: 12px; font-size: 15px; position: relative; 
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1); max-width: 85%;
+        }
+        .me .bubble { background: #DCF8C6; border-bottom-right-radius: 2px; }
+        .them .bubble { background: #FFFFFF; border-bottom-left-radius: 2px; }
 
+        /* Reaction Badge */
         .reaction-badge { 
-            position: absolute; bottom: -12px; right: 5px; 
+            position: absolute; bottom: -8px; right: 5px; 
             background: white; border-radius: 10px; font-size: 11px; 
             padding: 1px 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); 
-            display: none; z-index: 2;
+            display: none; z-index: 5;
         }
+
+        /* Reaction Tray */
         .reaction-tray {
-            position: absolute; top: -40px; background: white; 
-            border-radius: 20px; padding: 5px 10px; display: none; 
-            gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); z-index: 100;
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            background: #FFF; border-radius: 25px; padding: 5px 12px;
+            display: none; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 100;
         }
-        .reaction-tray span { cursor: pointer; font-size: 18px; transition: transform 0.1s; }
-        .reaction-tray span:hover { transform: scale(1.3); }
+        .reaction-tray span { font-size: 20px; cursor: pointer; transition: 0.1s; }
 
-        /* Input Area */
+        /* --- WHATSAPP INPUT AREA --- */
         #input-area { padding: 8px 10px; display: flex; gap: 8px; width: 100%; box-sizing: border-box; background: #F0F0F0; align-items: center; }
-        #msg-input { flex: 1; border-radius: 20px; border: 1px solid #FFF; padding: 10px 15px; margin-bottom: 0; font-size: 15px; }
+        .input-bar { flex: 1; background: #FFF; border-radius: 25px; padding: 0 15px; display: flex; align-items: center; }
+        #msg-input { border: none; background: transparent; padding: 10px 0; margin-bottom: 0; font-size: 15px; }
         
-        .icon-btn { background: none; border: none; cursor: pointer; padding: 5px; display: flex; align-items: center; justify-content: center; }
-        #mic-btn { color: #555; transition: color 0.2s; }
-        #mic-btn.recording { color: #ff3b30; animation: pulse 1s infinite; }
-        #send-btn { color: #007AFF; display: none; }
-
+        .action-btn { 
+            width: 42px; height: 42px; border-radius: 50%; background: var(--dark-yellow); 
+            color: #FFF; border: none; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; flex-shrink: 0;
+        }
+        #send-btn { background: #007AFF; display: none; }
+        .action-btn svg { width: 22px; height: 22px; fill: currentColor; }
+        
+        .recording { background: #FF3B30 !important; animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
-        
-        .typing-text { font-size: 11px; color: var(--wa-green); font-weight: 600; display: none; }
-        audio { height: 35px; width: 180px; }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
     <div class="container">
         <div class="live-indicator">
@@ -187,18 +184,20 @@
                 <span id="p-icon" style="font-size: 24px;">👤</span>
                 <div style="text-align: left;">
                     <b id="p-name" style="font-size: 14px;">Stranger</b><br>
-                    <span id="typing-status" class="typing-text">typing...</span>
+                    <small id="typing-status" style="color:var(--wa-green); display:none; font-size:10px;">typing...</small>
                     <small id="p-meta" style="color: var(--dark-yellow); font-size: 10px;"></small>
                 </div>
             </div>
             <div id="chat-box"></div>
             <div id="input-area">
-                <button id="mic-btn" class="icon-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
+                <div class="input-bar">
+                    <input type="text" id="msg-input" placeholder="Message" oninput="toggleInputButtons()">
+                </div>
+                <button id="mic-btn" class="action-btn">
+                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                 </button>
-                <input type="text" id="msg-input" placeholder="Message" oninput="handleTypingInput()">
-                <button id="send-btn" class="icon-btn" onclick="sendTextMessage()">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                <button id="send-btn" class="action-btn" onclick="sendTextMessage()">
+                    <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
                 </button>
             </div>
         </div>
@@ -209,12 +208,22 @@
         const socket = io();
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
         let matchTimer;
+        let pressTimer;
         let mediaRecorder;
         let audioChunks = [];
-        let typingTimeout;
+        
+        const msgInput = document.getElementById('msg-input');
         const micBtn = document.getElementById('mic-btn');
         const sendBtn = document.getElementById('send-btn');
-        const msgInput = document.getElementById('msg-input');
+        const chatBox = document.getElementById('chat-box');
+
+        // SECURITY: Block PrintScreen Clipboard
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'PrintScreen') {
+                navigator.clipboard.writeText('Security Breach Blocked');
+                alert("Screenshots are disabled.");
+            }
+        });
 
         socket.on('user-count', (count) => { 
             document.getElementById('user-count').innerText = count; 
@@ -251,112 +260,26 @@
         });
 
         socket.on('partner-disconnected', () => {
-            alert("Partner has left the chat.");
+            alert("Partner has left.");
             location.reload(); 
         });
 
-        // --- TYPING LOGIC ---
-        function handleTypingInput() {
-            const hasText = msgInput.value.trim().length > 0;
-            sendBtn.style.display = hasText ? 'block' : 'none';
-            micBtn.style.display = hasText ? 'none' : 'block';
+        // INPUT TOGGLE LOGIC
+        function toggleInputButtons() {
+            const val = msgInput.value.trim();
+            sendBtn.style.display = val.length > 0 ? 'flex' : 'none';
+            micBtn.style.display = val.length > 0 ? 'none' : 'flex';
             socket.emit('typing');
         }
 
         socket.on('partner-typing', () => {
-            document.getElementById('typing-status').style.display = 'inline';
-            clearTimeout(typingTimeout);
-            typingTimeout = setTimeout(() => {
-                document.getElementById('typing-status').style.display = 'none';
-            }, 2000);
+            document.getElementById('typing-status').style.display = 'block';
+            setTimeout(() => document.getElementById('typing-status').style.display = 'none', 2000);
         });
 
-        // --- TEXT MESSAGE ---
-        function sendTextMessage() {
-            const val = msgInput.value.trim();
-            if (val) {
-                const messageObj = { type: 'text', data: val, id: Date.now() };
-                socket.emit('send-message', messageObj);
-                appendMsg('me', messageObj);
-                msgInput.value = '';
-                handleTypingInput();
-            }
-        }
-
-        // --- HOLD TO TALK VOICE LOGIC ---
-        const startRecording = async (e) => {
-            e.preventDefault();
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                mediaRecorder = new MediaRecorder(stream);
-                audioChunks = [];
-                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
-                mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/mp3' });
-                    const reader = new FileReader();
-                    reader.readAsDataURL(audioBlob);
-                    reader.onloadend = () => {
-                        const messageObj = { type: 'voice', data: reader.result, id: Date.now() };
-                        socket.emit('send-message', messageObj);
-                        appendMsg('me', messageObj);
-                    };
-                    stream.getTracks().forEach(t => t.stop());
-                };
-                mediaRecorder.start();
-                micBtn.classList.add('recording');
-            } catch (err) { alert("Mic permission denied"); }
-        };
-
-        const stopRecording = () => {
-            if (mediaRecorder && mediaRecorder.state === "recording") {
-                mediaRecorder.stop();
-                micBtn.classList.remove('recording');
-            }
-        };
-
-        micBtn.addEventListener('mousedown', startRecording);
-        micBtn.addEventListener('touchstart', startRecording);
-        window.addEventListener('mouseup', stopRecording);
-        window.addEventListener('touchend', stopRecording);
-
-        // --- MESSAGE & REACTION LOGIC ---
-        socket.on('receive-message', (content) => appendMsg('them', content));
-
-        function appendMsg(side, content) {
-            const box = document.getElementById('chat-box');
-            const msgId = content.id;
-            const messageHtml = content.type === 'voice' ? `<audio controls src="${content.data}"></audio>` : content.data;
-
-            const wrapper = document.createElement('div');
-            wrapper.className = `msg-wrapper ${side}`;
-            wrapper.id = `wrapper-${msgId}`;
-            wrapper.innerHTML = `
-                <div class="reaction-tray" id="tray-${msgId}">
-                    <span onclick="sendReaction('${msgId}', '❤️')">❤️</span>
-                    <span onclick="sendReaction('${msgId}', '😂')">😂</span>
-                    <span onclick="sendReaction('${msgId}', '😮')">😮</span>
-                    <span onclick="sendReaction('${msgId}', '😢')">😢</span>
-                    <span onclick="sendReaction('${msgId}', '👍')">👍</span>
-                </div>
-                <div class="bubble" oncontextmenu="handleLongPress(event, '${msgId}')" ontouchstart="handleTouchStart(event, '${msgId}')" ontouchend="handleTouchEnd()">
-                    ${messageHtml}
-                    <div class="reaction-badge" id="badge-${msgId}"></div>
-                </div>
-            `;
-            box.appendChild(wrapper);
-            box.scrollTop = box.scrollHeight;
-        }
-
-        // Reaction handling
-        let touchTimer;
-        function handleLongPress(e, id) {
-            e.preventDefault();
-            document.getElementById(`tray-${id}`).style.display = 'flex';
-        }
-        function handleTouchStart(e, id) {
-            touchTimer = setTimeout(() => { document.getElementById(`tray-${id}`).style.display = 'flex'; }, 600);
-        }
-        function handleTouchEnd() { clearTimeout(touchTimer); }
+        // REACTION LOGIC
+        function startPress(id) { pressTimer = setTimeout(() => document.getElementById(`tray-${id}`).style.display = 'flex', 1000); }
+        function endPress() { clearTimeout(pressTimer); }
 
         function sendReaction(msgId, emoji) {
             socket.emit('reaction', { msgId, emoji });
@@ -366,13 +289,79 @@
 
         function applyReaction(msgId, emoji) {
             const badge = document.getElementById(`badge-${msgId}`);
-            if (badge) {
-                badge.innerText = emoji;
-                badge.style.display = 'block';
-            }
+            if (badge) { badge.innerText = emoji; badge.style.display = 'block'; }
         }
 
         socket.on('receive-reaction', (data) => applyReaction(data.msgId, data.emoji));
+
+        // MESSAGING
+        function sendTextMessage() {
+            const val = msgInput.value.trim();
+            if (val) {
+                const obj = { type: 'text', data: val, id: 'm' + Date.now() };
+                socket.emit('send-message', obj);
+                appendMsg('me', obj);
+                msgInput.value = '';
+                toggleInputButtons();
+            }
+        }
+
+        socket.on('receive-message', (content) => appendMsg('them', content));
+
+        function appendMsg(side, content) {
+            const msgId = content.id;
+            const div = document.createElement('div');
+            div.className = `msg-row ${side}`;
+            div.innerHTML = `
+                <div class="reaction-tray" id="tray-${msgId}">
+                    <span onclick="sendReaction('${msgId}', '❤️')">❤️</span>
+                    <span onclick="sendReaction('${msgId}', '😂')">😂</span>
+                    <span onclick="sendReaction('${msgId}', '😮')">😮</span>
+                    <span onclick="sendReaction('${msgId}', '😢')">😢</span>
+                    <span onclick="sendReaction('${msgId}', '👍')">👍</span>
+                </div>
+                <div class="bubble" 
+                     onmousedown="startPress('${msgId}')" onmouseup="endPress()" 
+                     ontouchstart="startPress('${msgId}')" ontouchend="endPress()">
+                    ${content.type === 'voice' ? `<audio src="${content.data}" controls></audio>` : content.data}
+                    <div class="reaction-badge" id="badge-${msgId}"></div>
+                </div>`;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // VOICE LOGIC (HOLD TO TALK)
+        const recordStart = async (e) => {
+            e.preventDefault();
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(audioChunks, { type: 'audio/mp3' });
+                const r = new FileReader();
+                r.readAsDataURL(blob);
+                r.onloadend = () => {
+                    const obj = { type: 'voice', data: r.result, id: 'v' + Date.now() };
+                    socket.emit('send-message', obj);
+                    appendMsg('me', obj);
+                };
+            };
+            mediaRecorder.start();
+            micBtn.classList.add('recording');
+        };
+
+        const recordStop = () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                micBtn.classList.remove('recording');
+            }
+        };
+
+        micBtn.addEventListener('mousedown', recordStart);
+        micBtn.addEventListener('touchstart', recordStart);
+        window.addEventListener('mouseup', recordStop);
+        window.addEventListener('touchend', recordStop);
     </script>
 </body>
 </html>
