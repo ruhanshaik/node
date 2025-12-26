@@ -9,15 +9,13 @@
             --omi-yellow: #FFD700;
             --omi-dark: #CC9900;
             --ios-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
-            --ai-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            --bg-gray: #F5F5F7;
         }
 
-        /* --- SECURITY: DISABLE SELECTION & COPY --- */
+        /* --- SECURITY & RESET --- */
         * {
             box-sizing: border-box;
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
             -webkit-touch-callout: none;
         }
@@ -25,137 +23,132 @@
 
         body {
             font-family: var(--ios-font);
-            background-image: linear-gradient(rgba(240, 240, 242, 0.7), rgba(240, 240, 242, 0.7)), url('background.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background-color: #f0f0f2;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
 
         .container {
             width: 100%;
-            max-width: 450px;
+            max-width: 500px;
             height: 100vh;
             background: #FFFFFF;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
             position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        /* Branding Styles */
-        .header-logo { width: 60px; height: 60px; margin: 10px auto; object-fit: contain; }
-        .brand-name { font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 10px; }
-        .brand-omi { color: #000000; }
-        .brand-gle { color: var(--omi-dark); }
-
-        .live-indicator {
-            position: absolute; top: 15px; right: 15px; background: rgba(0, 0, 0, 0.05);
-            padding: 5px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
-            display: flex; align-items: center; gap: 5px; color: var(--omi-dark);
-        }
-
-        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; height: 100%; box-sizing: border-box; }
+        /* --- SCREENS --- */
+        .screen { display: none; padding: 25px; flex-direction: column; align-items: center; height: 100%; width: 100%; box-sizing: border-box; justify-content: center; }
         .active { display: flex; }
 
-        /* Gender & Form Inputs */
-        .gender-box { display: flex; gap: 10px; width: 100%; margin-bottom: 20px; }
+        .header-logo-main { width: 120px; height: auto; margin-bottom: 20px; }
+        .brand-title { font-size: 28px; font-weight: 800; margin-bottom: 30px; }
+
+        /* --- LOADING SCREEN (RESPONSIVE LOGO) --- */
+        #screen-loading { background: #FFF; }
+        .pulse-logo {
+            width: 100px;
+            max-width: 25vw; /* Responsive sizing */
+            height: auto;
+            animation: pulseFade 2s infinite ease-in-out;
+        }
+        @keyframes pulseFade {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+
+        /* --- INPUTS --- */
+        .gender-box { display: flex; gap: 15px; width: 100%; max-width: 300px; margin-bottom: 20px; }
         .gender-btn {
-            flex: 1; padding: 15px; border-radius: 16px; background: #F4F4F7;
+            flex: 1; padding: 20px; border-radius: 16px; background: #F4F4F7;
             cursor: pointer; border: 2px solid transparent; transition: 0.2s; text-align: center;
         }
-        .gender-btn.selected { border-color: var(--omi-yellow); background: #FFF; }
-        .gender-btn span { font-size: 30px; }
-
-        .ios-btn {
-            width: 100%; background: #000; color: #FFF;
-            border: none; padding: 14px; border-radius: 14px;
-            font-weight: 700; font-size: 16px; cursor: pointer;
-        }
+        .gender-btn.selected { border-color: var(--omi-yellow); background: #FFF; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .gender-btn span { font-size: 32px; }
 
         input {
-            width: 100%; background: #F2F2F7; border: 1px solid #E5E5EA;
-            padding: 12px; border-radius: 12px; margin-bottom: 10px; outline: none;
+            width: 100%; max-width: 300px; background: #F2F2F7; border: 1px solid #E5E5EA;
+            padding: 14px; border-radius: 12px; margin-bottom: 12px; outline: none; font-size: 16px;
+        }
+        .start-btn {
+            width: 100%; max-width: 300px; background: #000; color: #FFF; border: none;
+            padding: 16px; border-radius: 14px; font-weight: 700; cursor: pointer;
         }
 
-        /* --- CHAT UI (EXACTLY LIKE SCREENSHOT) --- */
+        /* --- CHAT UI (SCREENSHOT STYLE) --- */
         #chat-header {
-            padding: 15px; border-bottom: 1px solid #EEE; display: flex;
-            justify-content: space-between; align-items: center; background: #FFF;
+            padding: 12px 18px; border-bottom: 1px solid #EEE; display: flex;
+            justify-content: space-between; align-items: center; background: #FFF; width: 100%;
         }
-        .header-info { text-align: left; flex: 1; }
-        .header-name { font-size: 18px; font-weight: 700; display: block; }
-        .header-status { font-size: 12px; color: #888; }
+        .header-info { text-align: left; }
+        .header-name { font-size: 17px; font-weight: 700; color: #000; }
+        .header-status { font-size: 12px; color: var(--omi-dark); display: block; }
 
-        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 15px; background: #FFF; }
+        #chat-box { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 20px; background: #FFF; width: 100%; }
 
-        .msg-row { display: flex; align-items: flex-start; gap: 10px; max-width: 90%; }
+        .msg-row { display: flex; align-items: flex-start; gap: 10px; max-width: 85%; position: relative; }
         .me { align-self: flex-end; flex-direction: row-reverse; }
         .them { align-self: flex-start; }
 
-        .avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+        .avatar { width: 38px; height: 38px; border-radius: 50%; background: #EEE; flex-shrink: 0; }
         
         .bubble-wrapper { display: flex; flex-direction: column; }
         .me .bubble-wrapper { align-items: flex-end; }
 
         .bubble {
-            padding: 10px 15px; border-radius: 15px; font-size: 14px; line-height: 1.4;
+            padding: 10px 16px; border-radius: 18px; font-size: 14px; line-height: 1.4;
             position: relative; word-wrap: break-word;
         }
         .them .bubble { background: #F1F1F1; color: #333; border-top-left-radius: 0; }
         .me .bubble { background: var(--omi-yellow); color: #000; border-top-right-radius: 0; }
 
-        .time { font-size: 10px; color: #AAA; margin-top: 5px; }
+        .time { font-size: 10px; color: #AAA; margin-top: 4px; }
 
-        /* Reaction System */
+        /* Reactions */
         .reaction-badge { 
-            position: absolute; bottom: -8px; right: 0; background: #FFF;
-            border-radius: 10px; font-size: 11px; padding: 1px 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2); display: none;
+            position: absolute; bottom: -8px; right: 5px; background: #FFF; 
+            border-radius: 10px; font-size: 11px; padding: 1px 5px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.15); display: none; z-index: 5;
         }
         .reaction-tray {
-            position: absolute; top: -45px; background: #FFF; border-radius: 20px;
-            padding: 5px 12px; display: none; gap: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10;
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            background: #FFF; border-radius: 25px; padding: 6px 14px;
+            display: none; gap: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 100;
         }
 
-        /* --- INPUT AREA (EXACTLY LIKE SCREENSHOT) --- */
+        /* --- INPUT AREA --- */
         #input-area {
             padding: 10px 15px; background: #FFF; border-top: 1px solid #EEE;
+            display: flex; align-items: center; gap: 10px; width: 100%;
+        }
+        .input-container {
+            flex: 1; background: #F5F5F7; border-radius: 25px; padding: 4px 15px;
             display: flex; align-items: center; gap: 10px;
         }
-        .input-pill {
-            flex: 1; background: #F5F5F7; border-radius: 25px; padding: 5px 15px;
-            display: flex; align-items: center; gap: 10px;
-        }
-        #msg-input { flex: 1; border: none; background: transparent; padding: 8px 0; outline: none; font-size: 14px; }
-        .icon-btn { background: none; border: none; cursor: pointer; color: #888; font-size: 18px; padding: 0; }
+        #msg-input { flex: 1; border: none; background: transparent; padding: 10px 0; outline: none; font-size: 15px; }
+        
+        .icon-btn { background: none; border: none; cursor: pointer; color: #8E8E93; font-size: 20px; padding: 0; }
         
         #send-btn { 
-            background: #7D5BBE; color: #FFF; font-weight: 700;
-            padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer;
+            background: var(--omi-yellow); color: #000; font-weight: 700;
+            padding: 10px 18px; border-radius: 20px; border: none; cursor: pointer;
             font-size: 14px; display: none;
         }
-
-        /* Animations */
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--omi-yellow); border-radius: 50%; animation: spin 1s linear infinite; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div class="container">
-        <div class="live-indicator">
-            <div style="width:6px; height:6px; background:var(--omi-dark); border-radius:50%;"></div>
-            <span id="user-count">0</span> LIVE
-        </div>
-
         <div id="screen-gender" class="screen active">
-            <img src="Omigle.png" class="header-logo">
-            <div class="brand-name"><span class="brand-omi">OMI</span><span class="brand-gle">GLE</span></div>
+            <img src="Omigle.png" class="header-logo-main">
+            <div class="brand-title">OMI<span style="color:var(--omi-dark)">GLE</span></div>
             <div class="gender-box">
                 <div class="gender-btn" onclick="selectGender('male', '👨')">
                     <span>👨</span><br><small>Male</small>
@@ -164,38 +157,36 @@
                     <span>👩</span><br><small>Female</small>
                 </div>
             </div>
-            <button class="ios-btn" onclick="showScreen('screen-form')">Next</button>
+            <button class="start-btn" onclick="showScreen('screen-form')">Next</button>
         </div>
 
         <div id="screen-form" class="screen">
-            <img src="Omigle.png" class="header-logo">
-            <h3 style="margin-bottom:20px;">Tell us about yourself</h3>
-            <input type="text" id="name" placeholder="Name">
-            <input type="number" id="age" placeholder="Age">
-            <input type="text" id="origin" placeholder="City">
-            <button class="ios-btn" onclick="startMatching()">Connect Now</button>
+            <h2 style="margin-bottom: 20px;">Your Details</h2>
+            <input type="text" id="name" placeholder="What's your name?">
+            <input type="number" id="age" placeholder="How old are you?">
+            <input type="text" id="origin" placeholder="Where are you from?">
+            <button class="start-btn" onclick="startMatching()">Connect Now</button>
         </div>
 
         <div id="screen-loading" class="screen">
-            <div class="loader"></div>
-            <p style="margin-top:20px; font-weight:600;">Finding a partner...</p>
-            <p id="timeout-msg" style="color:red; display:none; font-size:12px;">Still looking...</p>
+            <img src="Omigle.png" class="pulse-logo" alt="Omigle Loading">
+            <p style="margin-top: 25px; font-weight: 600; color: #666;">Looking for someone...</p>
         </div>
 
-        <div id="screen-chat" class="screen" style="padding:0;">
+        <div id="screen-chat" class="screen" style="padding:0; justify-content: flex-start;">
             <div id="chat-header">
                 <div class="header-info">
                     <span class="header-name" id="p-name">Stranger</span>
                     <span class="header-status" id="typing-status">Online</span>
                 </div>
-                <div style="font-size: 20px; cursor:pointer;">⋮</div>
+                <div style="font-size: 22px; color: #888; cursor: pointer;">⋮</div>
             </div>
 
             <div id="chat-box"></div>
 
             <div id="input-area">
-                <div class="input-pill">
-                    <input type="text" id="msg-input" placeholder="Start typing..." oninput="handleTyping()">
+                <div class="input-container">
+                    <input type="text" id="msg-input" placeholder="Start typing..." oninput="handleInputToggle()">
                     <button class="icon-btn">📎</button>
                     <button class="icon-btn">😊</button>
                     <button id="mic-btn" class="icon-btn">🎤</button>
@@ -209,23 +200,18 @@
     <script>
         const socket = io();
         let myData = { gender: '', icon: '', name: '', age: '', origin: '' };
-        let matchTimer;
         let pressTimer;
         
         const msgInput = document.getElementById('msg-input');
         const sendBtn = document.getElementById('send-btn');
         const micBtn = document.getElementById('mic-btn');
 
-        // Security: Prevent PrintScreen
+        // Block PrintScreen / Screenshots
         document.addEventListener('keyup', (e) => {
             if (e.key === 'PrintScreen') {
                 navigator.clipboard.writeText('');
-                alert("Security block.");
+                alert("Screenshots are blocked for security.");
             }
-        });
-
-        socket.on('user-count', (count) => { 
-            document.getElementById('user-count').innerText = count; 
         });
 
         function selectGender(g, icon) {
@@ -235,7 +221,7 @@
         }
 
         function showScreen(id) {
-            if (id === 'screen-form' && !myData.gender) return alert("Select gender.");
+            if (id === 'screen-form' && !myData.gender) return alert("Select your gender first.");
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
@@ -244,19 +230,18 @@
             myData.name = document.getElementById('name').value;
             myData.age = document.getElementById('age').value;
             myData.origin = document.getElementById('origin').value;
-            if(!myData.name) return alert("Name required");
+            if(!myData.name) return alert("Please enter your name.");
+            
             showScreen('screen-loading');
             socket.emit('find-match', myData);
-            matchTimer = setTimeout(() => document.getElementById('timeout-msg').style.display='block', 10000);
         }
 
         socket.on('match-found', (partner) => {
-            clearTimeout(matchTimer);
             showScreen('screen-chat');
             document.getElementById('p-name').innerText = partner.name;
         });
 
-        function handleTyping() {
+        function handleInputToggle() {
             const hasText = msgInput.value.trim().length > 0;
             sendBtn.style.display = hasText ? 'block' : 'none';
             micBtn.style.display = hasText ? 'none' : 'block';
@@ -264,18 +249,24 @@
         }
 
         socket.on('partner-typing', () => {
-            document.getElementById('typing-status').innerText = 'typing...';
-            setTimeout(() => document.getElementById('typing-status').innerText = 'Online', 2000);
+            const status = document.getElementById('typing-status');
+            status.innerText = 'typing...';
+            setTimeout(() => status.innerText = 'Online', 2000);
         });
 
         function sendTextMessage() {
-            const val = msgInput.value.trim();
-            if(val) {
-                const msg = { type: 'text', data: val, id: Date.now(), time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
+            const text = msgInput.value.trim();
+            if(text) {
+                const msg = { 
+                    type: 'text', 
+                    data: text, 
+                    id: 'm' + Date.now(),
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
                 socket.emit('send-message', msg);
                 appendMsg('me', msg);
                 msgInput.value = '';
-                handleTyping();
+                handleInputToggle();
             }
         }
 
@@ -286,14 +277,16 @@
             const row = document.createElement('div');
             row.className = `msg-row ${side}`;
             row.innerHTML = `
-                <img src="${side === 'me' ? 'my-avatar.png' : 'p-avatar.png'}" class="avatar">
+                <div class="avatar" style="background-image: url('${side === 'me' ? 'me.png' : 'them.png'}'); background-size: cover;"></div>
                 <div class="bubble-wrapper">
                     <div class="reaction-tray" id="tray-${content.id}">
                         <span onclick="sendReaction('${content.id}', '❤️')">❤️</span>
                         <span onclick="sendReaction('${content.id}', '😂')">😂</span>
-                        <span onclick="sendReaction('${content.id}', '😮')">😮</span>
+                        <span onclick="sendReaction('${content.id}', '👍')">👍</span>
                     </div>
-                    <div class="bubble" onmousedown="startPress('${content.id}')" onmouseup="endPress()" ontouchstart="startPress('${content.id}')" ontouchend="endPress()">
+                    <div class="bubble" 
+                         onmousedown="startPress('${content.id}')" onmouseup="endPress()" 
+                         ontouchstart="startPress('${content.id}')" ontouchend="endPress()">
                         ${content.data}
                         <div class="reaction-badge" id="badge-${content.id}"></div>
                     </div>
