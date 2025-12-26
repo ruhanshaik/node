@@ -5,15 +5,11 @@ const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-
-const io = new Server(server, { 
-    cors: { origin: "*" },
-    maxHttpBufferSize: 1e7 // Supports high quality voice data
-});
+const io = new Server(server, { cors: { origin: "*" }, maxHttpBufferSize: 1e7 });
 
 app.use(express.static(path.join(process.cwd())));
 
-let waitingUser = null;
+let waitingPool = []; // Pool to manage multiple waiting users
 let onlineCount = 0; 
 
 app.get('*', (req, res) => {
@@ -26,11 +22,15 @@ io.on('connection', (socket) => {
 
     socket.on('find-match', (userData) => {
         socket.userData = userData;
-        // Logic to prevent ghost waiting users
-        if (waitingUser && waitingUser.id !== socket.id && waitingUser.connected) {
-            const partner = waitingUser;
-            const roomId = `room-${socket.id}-${partner.id}`;
+
+        // Filter out any disconnected users still in pool
+        waitingPool = waitingPool.filter(s => s.connected);
+
+        if (waitingPool.length > 0) {
+            // Match found! Take the first person waiting
+            const partner = waitingPool.shift();
             
+            const roomId = `room-${socket.id}-${partner.id}`;
             socket.join(roomId);
             partner.join(roomId);
             
@@ -41,48 +41,35 @@ io.on('connection', (socket) => {
 
             socket.emit('match-found', partner.userData);
             partner.emit('match-found', socket.userData);
-            waitingUser = null;
         } else {
-            waitingUser = socket;
+            // Nobody waiting, add current user to pool
+            waitingPool.push(socket);
         }
     });
 
     socket.on('typing', () => {
-        if (socket.currentRoom) {
-            socket.to(socket.currentRoom).emit('partner-typing');
-        }
+        if (socket.currentRoom) socket.to(socket.currentRoom).emit('partner-typing');
     });
 
     socket.on('reaction', (data) => {
-        if (socket.currentRoom) {
-            socket.to(socket.currentRoom).emit('receive-reaction', data);
-        }
+        if (socket.currentRoom) socket.to(socket.currentRoom).emit('receive-reaction', data);
     });
 
     socket.on('send-message', (content) => {
-        if (socket.currentRoom) {
-            socket.to(socket.currentRoom).emit('receive-message', content);
-        }
+        if (socket.currentRoom) socket.to(socket.currentRoom).emit('receive-message', content);
     });
 
     socket.on('disconnect', () => {
         onlineCount = Math.max(0, onlineCount - 1);
         io.emit('user-count', onlineCount);
-
-        if (waitingUser && waitingUser.id === socket.id) waitingUser = null;
+        
+        // Remove from waiting pool if they left
+        waitingPool = waitingPool.filter(s => s.id !== socket.id);
 
         if (socket.currentRoom) {
             io.to(socket.currentRoom).emit('partner-disconnected');
-            const partnerSocket = io.sockets.sockets.get(socket.partnerId);
-            if (partnerSocket) {
-                partnerSocket.leave(socket.currentRoom);
-                partnerSocket.currentRoom = null;
-            }
         }
     });
 });
 
-const PORT = process.env.PORT || 8080;
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`OMIGLE is LIVE on port ${PORT}`);
-});
+server.listen(8080, '0.0.0.0', () => console.log('OMIGLE LIVE ON 8080'));
