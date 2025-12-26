@@ -9,25 +9,21 @@ const io = new Server(server, { cors: { origin: "*" }, maxHttpBufferSize: 1e7 })
 
 app.use(express.static(path.join(process.cwd())));
 
-let waitingPool = []; // Pool to manage multiple waiting users
-let onlineCount = 0; 
+let waitingPool = []; // Pool for multiple waiting users
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'index.html'));
 });
 
 io.on('connection', (socket) => {
-    onlineCount++;
-    io.emit('user-count', onlineCount);
-
     socket.on('find-match', (userData) => {
         socket.userData = userData;
 
-        // Filter out any disconnected users still in pool
+        // Clean pool: filter out disconnected users
         waitingPool = waitingPool.filter(s => s.connected);
 
         if (waitingPool.length > 0) {
-            // Match found! Take the first person waiting
+            // Match found: Take the oldest person waiting
             const partner = waitingPool.shift();
             
             const roomId = `room-${socket.id}-${partner.id}`;
@@ -42,7 +38,7 @@ io.on('connection', (socket) => {
             socket.emit('match-found', partner.userData);
             partner.emit('match-found', socket.userData);
         } else {
-            // Nobody waiting, add current user to pool
+            // Put current user in the pool
             waitingPool.push(socket);
         }
     });
@@ -60,14 +56,9 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        onlineCount = Math.max(0, onlineCount - 1);
-        io.emit('user-count', onlineCount);
-        
-        // Remove from waiting pool if they left
         waitingPool = waitingPool.filter(s => s.id !== socket.id);
-
         if (socket.currentRoom) {
-            io.to(socket.currentRoom).emit('partner-disconnected');
+            socket.to(socket.currentRoom).emit('partner-disconnected');
         }
     });
 });
